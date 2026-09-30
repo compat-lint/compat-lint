@@ -11,11 +11,6 @@ allowBuilds:
   "@parcel/watcher": false
   unrs-resolver: false
 
-overrides:
-  # The browser data the plugin's tests and snapshots were written against (also used by browserslist)
-  caniuse-lite: 1.0.30001806
-  browserslist: 4.28.2
-
 # Minutes a version must be public before it is installed
 minimumReleaseAge: 1440
 minimumReleaseAgeExclude:

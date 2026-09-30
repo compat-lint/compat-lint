@@ -137,7 +137,8 @@ ruleTester.run("compat", rule, {
         import * as serviceWorker from './serviceWorker';
         serviceWorker.register(false);
       `,
-      settings: { browsers: ["chrome 52", "android 147"] },
+      // Opera Mini has never supported service workers, so a match on `ServiceWorker` would report
+      settings: { browsers: ["chrome 52", "op_mini all"] },
     },
     {
       code: `
@@ -147,7 +148,8 @@ ruleTester.run("compat", rule, {
             permissionStatus.addEventListener('change', () => {});
           });
       `,
-      settings: { browsers: ["chrome 52", "android 147"] },
+      // The Android WebView has never supported `PermissionStatus`, so a match on it would report
+      settings: { browsers: ["chrome 52", "last 1 Android versions"] },
     },
     {
       code: `
@@ -351,7 +353,7 @@ ruleTester.run("compat", rule, {
     {
       code: "document.hasFocus()",
       settings: {
-        browsers: ["Chrome 27"],
+        browsers: ["Chrome 34"],
       },
     },
     {
