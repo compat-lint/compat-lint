@@ -4,6 +4,8 @@ on:
   pull_request:
     types: [opened, synchronize, edited]
 
+permissions: {}
+
 jobs:
   pr-title-check:
     name: Check PR for semantic title
