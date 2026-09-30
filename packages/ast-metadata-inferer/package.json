@@ -6,24 +6,26 @@
   "author": "Amila Welihinda <amilajack@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@tsconfig/node16": "^1.0.3",
     "@types/jest": "^29.4.0",
     "@types/node": "^18.13.0",
-    "@typescript-eslint/eslint-plugin": "^5.51.0",
-    "@typescript-eslint/parser": "^5.51.0",
     "electron": "^23.0.0",
-    "eslint": "^8.33.0",
-    "eslint-config-bliss": "^6.0.5",
+    "eslint": "^10.11.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.12.0",
     "jest": "^29.4.2",
+    "prettier": "^2.8.8",
     "puppeteer": "^24.43.1",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "typescript-eslint": "^8.71.0"
   },
   "scripts": {
     "build": "rm -rf lib && tsc && npm run metadata && npm run compat",
     "compat": "ts-node ./src/compat.ts",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint": "eslint . && prettier --check .",
     "metadata": "ts-node ./src/metadata.ts",
     "preversion": "npm test && npm run compat && tsc --project tsconfig.build.json",
     "start": "npm run metadata",
@@ -34,59 +36,6 @@
     "compat.json",
     "metadata.json"
   ],
-  "eslintConfig": {
-    "extends": [
-      "plugin:import/errors",
-      "plugin:import/typescript",
-      "plugin:prettier/recommended",
-      "plugin:promise/recommended"
-    ],
-    "parserOptions": {
-      "ecmaVersion": 2018,
-      "sourceType": "module"
-    },
-    "rules": {
-      "import/extensions": "off",
-      "prettier/prettier": [
-        "error"
-      ]
-    },
-    "overrides": [
-      {
-        "extends": [
-          "bliss",
-          "plugin:import/typescript",
-          "plugin:@typescript-eslint/recommended",
-          "plugin:prettier/recommended",
-          "plugin:promise/recommended"
-        ],
-        "files": [
-          "*.ts",
-          "*.tsx"
-        ],
-        "parser": "@typescript-eslint/parser",
-        "parserOptions": {
-          "ecmaVersion": 2018,
-          "sourceType": "module"
-        },
-        "rules": {
-          "import/default": "off",
-          "import/extensions": "off",
-          "import/no-extraneous-dependencies": "off",
-          "@typescript-eslint/no-var-requires": "off"
-        }
-      },
-      {
-        "files": [
-          "*.spec.ts",
-          "*.spec.tsx"
-        ],
-        "rules": {
-          "@typescript-eslint/ban-ts-ignore": "off"
-        }
-      }
-    ]
-  },
   "dependencies": {
     "@mdn/browser-compat-data": "^8.1.3"
   }

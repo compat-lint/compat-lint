@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
 import microsoftAPICatalog from "./microsoft-api-catalog-data.json";
 import HasPrefix from "../../helpers/has-prefix";
