@@ -1,5 +1,11 @@
 # @compat-lint/ast-metadata-inferer
 
+## 8.0.1
+
+### Patch Changes
+
+- 5127571: Update release flow
+
 ## 8.0.0
 
 ### Major Changes

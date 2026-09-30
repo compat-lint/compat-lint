@@ -1,5 +1,13 @@
 ## [7.0.2](https://github.com/amilajack/eslint-plugin-compat/compare/v7.0.1...v7.0.2) (2026-04-29)
 
+## 8.0.1
+
+### Patch Changes
+
+- 5127571: Update release flow
+- Updated dependencies [5127571]
+  - @compat-lint/ast-metadata-inferer@8.0.1
+
 ## 8.0.0
 
 ### Major Changes
