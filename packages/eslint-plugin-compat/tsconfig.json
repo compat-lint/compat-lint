@@ -1,0 +1,10 @@
+{
+  "extends": "@tsconfig/node16",
+  "compilerOptions": {
+    "outDir": "lib/esm",
+    "declaration": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "types": ["node", "jest"]
+  }
+}

@@ -1,0 +1,391 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Versioning should get lowest target versions 1`] = `
+[
+  {
+    "parsedVersion": 7,
+    "target": "node",
+    "version": "7",
+  },
+  {
+    "parsedVersion": 50.5,
+    "target": "firefox",
+    "version": "50.5",
+  },
+  {
+    "parsedVersion": 20,
+    "target": "chrome",
+    "version": "20",
+  },
+]
+`;
+
+exports[`Versioning should support multi env config in browserslist package.json 1`] = `
+[
+  {
+    "parsedVersion": 26,
+    "target": "samsung",
+    "version": "26",
+  },
+  {
+    "parsedVersion": 26.1,
+    "target": "safari",
+    "version": "26.1",
+  },
+  {
+    "parsedVersion": 125,
+    "target": "opera",
+    "version": "125",
+  },
+  {
+    "parsedVersion": 80,
+    "target": "op_mob",
+    "version": "80",
+  },
+  {
+    "parsedVersion": 0,
+    "target": "op_mini",
+    "version": "all",
+  },
+  {
+    "parsedVersion": 2.5,
+    "target": "kaios",
+    "version": "2.5",
+  },
+  {
+    "parsedVersion": 18.5,
+    "target": "ios_saf",
+    "version": "18.5-18.7",
+  },
+  {
+    "parsedVersion": 10,
+    "target": "ie_mob",
+    "version": "10",
+  },
+  {
+    "parsedVersion": 9,
+    "target": "ie",
+    "version": "9",
+  },
+  {
+    "parsedVersion": 140,
+    "target": "firefox",
+    "version": "140",
+  },
+  {
+    "parsedVersion": 144,
+    "target": "edge",
+    "version": "144",
+  },
+  {
+    "parsedVersion": 144,
+    "target": "chrome",
+    "version": "144",
+  },
+  {
+    "parsedVersion": 7,
+    "target": "bb",
+    "version": "7",
+  },
+  {
+    "parsedVersion": 13.52,
+    "target": "baidu",
+    "version": "13.52",
+  },
+  {
+    "parsedVersion": 147,
+    "target": "android",
+    "version": "147",
+  },
+  {
+    "parsedVersion": 15.5,
+    "target": "and_uc",
+    "version": "15.5",
+  },
+  {
+    "parsedVersion": 14.9,
+    "target": "and_qq",
+    "version": "14.9",
+  },
+  {
+    "parsedVersion": 150,
+    "target": "and_ff",
+    "version": "150",
+  },
+  {
+    "parsedVersion": 147,
+    "target": "and_chr",
+    "version": "147",
+  },
+]
+`;
+
+exports[`Versioning should support resolving browserslist config in subdirectory 1`] = `
+[
+  {
+    "parsedVersion": 70,
+    "target": "chrome",
+    "version": "70",
+  },
+]
+`;
+
+exports[`Versioning should support resolving browserslist config in subdirectory 2`] = `
+[
+  {
+    "parsedVersion": 28,
+    "target": "samsung",
+    "version": "28",
+  },
+  {
+    "parsedVersion": 26.3,
+    "target": "safari",
+    "version": "26.3",
+  },
+  {
+    "parsedVersion": 127,
+    "target": "opera",
+    "version": "127",
+  },
+  {
+    "parsedVersion": 80,
+    "target": "op_mob",
+    "version": "80",
+  },
+  {
+    "parsedVersion": 0,
+    "target": "op_mini",
+    "version": "all",
+  },
+  {
+    "parsedVersion": 2.5,
+    "target": "kaios",
+    "version": "2.5",
+  },
+  {
+    "parsedVersion": 18.5,
+    "target": "ios_saf",
+    "version": "18.5-18.7",
+  },
+  {
+    "parsedVersion": 140,
+    "target": "firefox",
+    "version": "140",
+  },
+  {
+    "parsedVersion": 145,
+    "target": "edge",
+    "version": "145",
+  },
+  {
+    "parsedVersion": 109,
+    "target": "chrome",
+    "version": "109",
+  },
+  {
+    "parsedVersion": 147,
+    "target": "android",
+    "version": "147",
+  },
+  {
+    "parsedVersion": 15.5,
+    "target": "and_uc",
+    "version": "15.5",
+  },
+  {
+    "parsedVersion": 14.9,
+    "target": "and_qq",
+    "version": "14.9",
+  },
+  {
+    "parsedVersion": 150,
+    "target": "and_ff",
+    "version": "150",
+  },
+  {
+    "parsedVersion": 147,
+    "target": "and_chr",
+    "version": "147",
+  },
+]
+`;
+
+exports[`Versioning should support single array config in browserslist package.json 1`] = `
+[
+  {
+    "parsedVersion": 26,
+    "target": "samsung",
+    "version": "26",
+  },
+  {
+    "parsedVersion": 26.1,
+    "target": "safari",
+    "version": "26.1",
+  },
+  {
+    "parsedVersion": 125,
+    "target": "opera",
+    "version": "125",
+  },
+  {
+    "parsedVersion": 80,
+    "target": "op_mob",
+    "version": "80",
+  },
+  {
+    "parsedVersion": 0,
+    "target": "op_mini",
+    "version": "all",
+  },
+  {
+    "parsedVersion": 2.5,
+    "target": "kaios",
+    "version": "2.5",
+  },
+  {
+    "parsedVersion": 18.5,
+    "target": "ios_saf",
+    "version": "18.5-18.7",
+  },
+  {
+    "parsedVersion": 10,
+    "target": "ie_mob",
+    "version": "10",
+  },
+  {
+    "parsedVersion": 9,
+    "target": "ie",
+    "version": "9",
+  },
+  {
+    "parsedVersion": 140,
+    "target": "firefox",
+    "version": "140",
+  },
+  {
+    "parsedVersion": 144,
+    "target": "edge",
+    "version": "144",
+  },
+  {
+    "parsedVersion": 138,
+    "target": "chrome",
+    "version": "138",
+  },
+  {
+    "parsedVersion": 7,
+    "target": "bb",
+    "version": "7",
+  },
+  {
+    "parsedVersion": 13.52,
+    "target": "baidu",
+    "version": "13.52",
+  },
+  {
+    "parsedVersion": 147,
+    "target": "android",
+    "version": "147",
+  },
+  {
+    "parsedVersion": 15.5,
+    "target": "and_uc",
+    "version": "15.5",
+  },
+  {
+    "parsedVersion": 14.9,
+    "target": "and_qq",
+    "version": "14.9",
+  },
+  {
+    "parsedVersion": 150,
+    "target": "and_ff",
+    "version": "150",
+  },
+  {
+    "parsedVersion": 147,
+    "target": "and_chr",
+    "version": "147",
+  },
+]
+`;
+
+exports[`Versioning should support string config in rule option 1`] = `
+[
+  {
+    "parsedVersion": 28,
+    "target": "samsung",
+    "version": "28",
+  },
+  {
+    "parsedVersion": 26.3,
+    "target": "safari",
+    "version": "26.3",
+  },
+  {
+    "parsedVersion": 127,
+    "target": "opera",
+    "version": "127",
+  },
+  {
+    "parsedVersion": 80,
+    "target": "op_mob",
+    "version": "80",
+  },
+  {
+    "parsedVersion": 0,
+    "target": "op_mini",
+    "version": "all",
+  },
+  {
+    "parsedVersion": 2.5,
+    "target": "kaios",
+    "version": "2.5",
+  },
+  {
+    "parsedVersion": 18.5,
+    "target": "ios_saf",
+    "version": "18.5-18.7",
+  },
+  {
+    "parsedVersion": 140,
+    "target": "firefox",
+    "version": "140",
+  },
+  {
+    "parsedVersion": 145,
+    "target": "edge",
+    "version": "145",
+  },
+  {
+    "parsedVersion": 109,
+    "target": "chrome",
+    "version": "109",
+  },
+  {
+    "parsedVersion": 147,
+    "target": "android",
+    "version": "147",
+  },
+  {
+    "parsedVersion": 15.5,
+    "target": "and_uc",
+    "version": "15.5",
+  },
+  {
+    "parsedVersion": 14.9,
+    "target": "and_qq",
+    "version": "14.9",
+  },
+  {
+    "parsedVersion": 150,
+    "target": "and_ff",
+    "version": "150",
+  },
+  {
+    "parsedVersion": 147,
+    "target": "and_chr",
+    "version": "147",
+  },
+]
+`;
