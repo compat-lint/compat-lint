@@ -38,7 +38,6 @@
     "extends": [
       "plugin:import/errors",
       "plugin:import/typescript",
-      "prettier/@typescript-eslint",
       "plugin:prettier/recommended",
       "plugin:promise/recommended"
     ],
@@ -58,7 +57,6 @@
           "bliss",
           "plugin:import/typescript",
           "plugin:@typescript-eslint/recommended",
-          "prettier/@typescript-eslint",
           "plugin:prettier/recommended",
           "plugin:promise/recommended"
         ],
