@@ -1,6 +1,6 @@
-import apiMetadata from "ast-metadata-inferer";
+import apiMetadata from "@compat-lint/ast-metadata-inferer";
 import semver from "semver";
-import { ApiMetadata } from "ast-metadata-inferer/lib/types";
+import { ApiMetadata } from "@compat-lint/ast-metadata-inferer/lib/types";
 import { reverseTargetMappings } from "../helpers";
 import { STANDARD_TARGET_NAME_MAPPING } from "../constants";
 import { AstMetadataApiWithTargetsResolver, Target } from "../types";

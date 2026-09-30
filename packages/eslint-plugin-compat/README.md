@@ -16,14 +16,14 @@ Lint the browser compatibility of your code
 ### 1. Install
 
 ```bash
-npm install eslint-plugin-compat
+npm install @compat-lint/eslint-plugin-compat
 ```
 
 ### 2. Update ESLint Config
 
 ```js
 // eslint.config.mjs
-import compat from "eslint-plugin-compat";
+import compat from "@compat-lint/eslint-plugin-compat";
 
 export default [compat.configs["flat/recommended"]];
 ```
@@ -138,7 +138,7 @@ This project was inspired by a two hour conversation I had with someone on the e
 
 ## Related
 
-- [ast-metadata-inferer](https://github.com/amilajack/ast-metadata-inferer)
+- [ast-metadata-inferer](https://github.com/compat-lint/ast-metadata-inferer)
 - [compat-db](https://github.com/amilajack/compat-db)
 
 ## Contributors

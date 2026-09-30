@@ -1,56 +1,29 @@
 name: Release
 
+# Publish by pushing a version tag, e.g. `npm version minor && git push --follow-tags`
 on:
-  workflow_run:
-    workflows: ["Test"]
-    types:
-      - completed
-    branches:
-      - main
-  workflow_dispatch:
-    inputs:
-      dryRun:
-        description: "Do a dry run to preview instead of a real release"
-        required: true
-        default: "true"
+  push:
+    tags:
+      - "v*"
+
+permissions: {}
 
 jobs:
-  authorize:
-    name: Authorize
-    runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch'
-    steps:
-      - name: ${{ github.actor }} permission check to do a release
-        uses: octokit/request-action@v2.x
-        with:
-          route: GET /repos/:repository/collaborators/${{ github.actor }}
-          repository: ${{ github.repository }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   release:
     name: Release
     runs-on: ubuntu-latest
-    needs: [authorize]
-    if: |
-      always() &&
-      (needs.authorize.result == 'success' || needs.authorize.result == 'skipped') &&
-      (github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success')
     permissions:
-      contents: write
-      issues: write
-      pull-requests: write
+      contents: write # Create the GitHub release
       id-token: write # Required for npm trusted publishing (OIDC)
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          fetch-depth: 0
           persist-credentials: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
           cache: npm
@@ -59,17 +32,38 @@ jobs:
       - name: Upgrade npm # Trusted publishing requires npm >= 11.5.1
         run: npm install -g npm@11
 
+      - name: Check tag matches package.json version
+        run: |
+          version="$(node -p 'require("./package.json").version')"
+          if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version $version"
+            exit 1
+          fi
+
       - name: Install dependencies
         run: npm ci
 
-      - name: Release --dry-run # Uses release.config.js
-        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.dryRun == 'true'}}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release --dry-run
+      - name: Build
+        run: npm run build
 
-      - name: Release # Uses release.config.js
-        if: ${{ github.event_name == 'workflow_run' || (github.event_name == 'workflow_dispatch' && github.event.inputs.dryRun == 'false')}}
+      - name: Test
+        run: npm run spec -- --testPathIgnorePatterns="test/e2e-repo.spec.ts|test/flat-config-typing.spec.ts"
+
+      - name: Publish to npm
+        run: |
+          # Prereleases like 1.2.3-beta.0 must not become `latest`
+          if [[ "$GITHUB_REF_NAME" == *-* ]]; then
+            npm publish --tag next
+          else
+            npm publish
+          fi
+
+      - name: Create GitHub release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          prerelease=""
+          if [[ "$GITHUB_REF_NAME" == *-* ]]; then
+            prerelease="--prerelease"
+          fi
+          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --verify-tag --generate-notes $prerelease
