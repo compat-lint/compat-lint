@@ -1,0 +1,41 @@
+name: Release
+on:
+  release:
+    types:
+      - published
+permissions:
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # npm trusted publishing (OIDC), which also attaches provenance
+      id-token: write
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Install Node.js, NPM
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - name: Check tag matches version
+        run: |
+          version="v$(node -p 'require("./package.json").version')"
+          if [ "$version" != "$GITHUB_REF_NAME" ]; then
+            echo "Release tag $GITHUB_REF_NAME does not match package.json $version" >&2
+            exit 1
+          fi
+      # https://pptr.dev/troubleshooting#issues-with-apparmor-on-ubuntu
+      - name: Allow Chrome sandbox
+        run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+      - name: npm install
+        run: npm ci
+      # Also generates metadata.json and compat.json
+      - name: npm test
+        run: npm test
+      - name: Build library
+        run: npx tsc --project tsconfig.build.json
+      - name: Publish
+        run: npm publish

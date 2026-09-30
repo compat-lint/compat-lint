@@ -1,6 +1,8 @@
-# ast-metadata-inferer
+# @compat-lint/ast-metadata-inferer
 
-[![Test](https://github.com/amilajack/ast-metadata-inferer/actions/workflows/test.yml/badge.svg)](https://github.com/amilajack/ast-metadata-inferer/actions/workflows/test.yml)
+[![Test](https://github.com/compat-lint/ast-metadata-inferer/actions/workflows/test.yml/badge.svg)](https://github.com/compat-lint/ast-metadata-inferer/actions/workflows/test.yml)
+
+Fork of [amilajack/ast-metadata-inferer](https://github.com/amilajack/ast-metadata-inferer).
 
 A collection of metadata about browser API's. This collection is intended for tools that analyze JS. It currently supports more than 6,000 compatibility records.
 
@@ -14,7 +16,7 @@ For all the API's it supports, it gives the
 ## Usage
 
 ```js
-import AstMetadata from "ast-metadata-inferer";
+import AstMetadata from "@compat-lint/ast-metadata-inferer";
 
 const [firstRecord] = AstMetadata;
 console.log(firstRecord);
