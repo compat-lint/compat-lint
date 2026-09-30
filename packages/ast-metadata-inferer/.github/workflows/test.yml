@@ -24,5 +24,7 @@ jobs:
         run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
       - name: npm install
         run: npm ci
+      - name: npm run lint
+        run: npm run lint
       - name: npm test
         run: npm test
