@@ -225,8 +225,6 @@ async function parallelizeBrowserTests<T>(tests: string[]): Promise<T[]> {
         return [${tests.join(",")}];
       })()`
     );
-  } catch (e) {
-    console.error(e);
   } finally {
     await page.close();
     await browser.close();
