@@ -1,7 +1,6 @@
 /* eslint global-require: off, no-console: off */
 import fs from "fs";
 import astMetadataInferer from "../src/metadata";
-import { ApiMetadata } from "../src/types";
 
 jest.setTimeout(process.env.CI ? 600_000 : 60_000);
 
@@ -43,9 +42,7 @@ describe("AstMetadataInferer", () => {
   it("should expose metadata.json in parsable format", async () => {
     const astMetadata = await astMetadataInferer();
     const querySelectorRecord = astMetadata.find(
-      // @ts-ignore
-      (apiMetadata: ApiMetadata) =>
-        apiMetadata.protoChainId === "document.querySelector"
+      (apiMetadata) => apiMetadata.protoChainId === "document.querySelector"
     );
     expect(querySelectorRecord).toMatchSnapshot();
   });
