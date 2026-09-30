@@ -71,9 +71,11 @@ jobs:
           if [[ "$GITHUB_REF_NAME" == *-* ]]; then
             tag="next"
           fi
-          # The plugin depends on the inferer, so the inferer goes first
-          npm publish dist/compat-lint-ast-metadata-inferer-*.tgz --tag "$tag"
-          npm publish dist/compat-lint-eslint-plugin-compat-*.tgz --tag "$tag"
+          # The plugin depends on the inferer, so the inferer goes first. The `./` makes npm read
+          # a file path; `dist/…` alone is taken as a GitHub repo shorthand.
+          version="${GITHUB_REF_NAME#v}"
+          npm publish "./dist/compat-lint-ast-metadata-inferer-$version.tgz" --tag "$tag"
+          npm publish "./dist/compat-lint-eslint-plugin-compat-$version.tgz" --tag "$tag"
 
       - name: Create GitHub release
         env:
