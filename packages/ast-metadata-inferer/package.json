@@ -4,7 +4,8 @@
   "main": "compat.json",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/compat-lint/ast-metadata-inferer.git"
+    "url": "git+https://github.com/compat-lint/compat-lint.git",
+    "directory": "packages/ast-metadata-inferer"
   },
   "publishConfig": {
     "access": "public"
@@ -29,11 +30,10 @@
     "typescript-eslint": "^8.71.0"
   },
   "scripts": {
-    "build": "rm -rf lib && tsc && npm run metadata && npm run compat",
+    "build": "rm -rf lib && tsc && tsc --project tsconfig.build.json && npm run metadata && npm run compat",
     "compat": "ts-node ./src/compat.ts",
     "lint": "eslint . && prettier --check .",
     "metadata": "ts-node ./src/metadata.ts",
-    "preversion": "npm test && npm run compat && tsc --project tsconfig.build.json",
     "start": "npm run metadata",
     "test": "jest && npm run build"
   },

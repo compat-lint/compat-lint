@@ -1,0 +1,22 @@
+packages:
+  - packages/*
+
+# Allowlist: a dependency's install script runs only when listed here as `true`
+allowBuilds:
+  # Downloads the Chrome the inferer generates its data with
+  puppeteer: true
+  # Unused binary; no download needed
+  electron: false
+  # Build-from-source fallbacks; the prebuilt binaries come as optional dependencies
+  "@parcel/watcher": false
+  unrs-resolver: false
+
+overrides:
+  # The browser data the plugin's tests and snapshots were written against (also used by browserslist)
+  caniuse-lite: 1.0.30001806
+  browserslist: 4.28.2
+
+# Minutes a version must be public before it is installed
+minimumReleaseAge: 1440
+minimumReleaseAgeExclude:
+  - "@compat-lint/*"
