@@ -1,5 +1,16 @@
 ## [7.0.2](https://github.com/amilajack/eslint-plugin-compat/compare/v7.0.1...v7.0.2) (2026-04-29)
 
+## 8.0.0
+
+### Major Changes
+
+- a951a22: Published from the `compat-lint/compat-lint` monorepo under the `@compat-lint` scope, with a shared version. The metadata now includes static members such as `AbortSignal.timeout` and is generated with a current Chrome and `@mdn/browser-compat-data` 8.
+
+### Patch Changes
+
+- Updated dependencies [a951a22]
+  - @compat-lint/ast-metadata-inferer@8.0.0
+
 
 ### Performance Improvements
 
