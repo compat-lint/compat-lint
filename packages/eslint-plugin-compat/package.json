@@ -70,7 +70,7 @@
     ]
   },
   "dependencies": {
-    "ast-metadata-inferer": "^0.8.1",
+    "@compat-lint/ast-metadata-inferer": "^0.8.1",
     "browserslist": "^4.28.2",
     "caniuse-lite": "^1.0.30001806",
     "find-up": "^5.0.0",

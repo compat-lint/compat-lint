@@ -138,7 +138,7 @@ This project was inspired by a two hour conversation I had with someone on the e
 
 ## Related
 
-- [ast-metadata-inferer](https://github.com/amilajack/ast-metadata-inferer)
+- [ast-metadata-inferer](https://github.com/compat-lint/ast-metadata-inferer)
 - [compat-db](https://github.com/amilajack/compat-db)
 
 ## Contributors

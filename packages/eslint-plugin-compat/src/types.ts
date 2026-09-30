@@ -1,4 +1,4 @@
-import { APIKind } from "ast-metadata-inferer/lib/types";
+import { APIKind } from "@compat-lint/ast-metadata-inferer/lib/types";
 import type { Options as DefaultBrowsersListOpts } from "browserslist";
 import { Rule } from "eslint";
 import { TargetNameMappings } from "./constants";
