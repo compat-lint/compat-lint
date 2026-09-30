@@ -27,8 +27,8 @@ jobs:
       - name: Create version pull request
         uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
-          version: pnpm run version
-          title: "chore: Version packages"
-          commit: "chore: Version packages"
+          version-script: pnpm run version
+          pr-title: "chore: Version packages"
+          commit-message: "chore: Version packages"
         env:
           GITHUB_TOKEN: ${{ github.token }}
