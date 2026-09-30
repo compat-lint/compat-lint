@@ -1,5 +1,5 @@
 {
-  "name": "eslint-plugin-compat",
+  "name": "@compat-lint/eslint-plugin-compat",
   "version": "7.0.2",
   "description": "Lint browser compatibility of API used",
   "keywords": [
@@ -11,13 +11,13 @@
     "caniuse",
     "kangax"
   ],
-  "homepage": "https://github.com/amilajack/eslint-plugin-compat#readme",
+  "homepage": "https://github.com/compat-lint/eslint-plugin-compat#readme",
   "bugs": {
-    "url": "https://github.com/amilajack/eslint-plugin-compat/issues"
+    "url": "https://github.com/compat-lint/eslint-plugin-compat/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/amilajack/eslint-plugin-compat.git"
+    "url": "git+https://github.com/compat-lint/eslint-plugin-compat.git"
   },
   "license": "MIT",
   "author": "Amila Welihinda",
@@ -38,6 +38,9 @@
         "default": "./lib/cjs/src/index.js"
       }
     }
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "files": [
     "lib"
