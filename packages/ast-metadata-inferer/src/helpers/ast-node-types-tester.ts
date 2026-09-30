@@ -1,4 +1,3 @@
-/* eslint @typescript-eslint/ban-ts-ignore: off */
 import puppeteer from "puppeteer";
 import { Language, CssApiMetadata, ProviderApiMetadata } from "../types";
 
@@ -216,12 +215,11 @@ process.setMaxListeners(0);
 async function parallelizeBrowserTests<T>(tests: string[]): Promise<T[]> {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  let res: T[] = [];
+  let res: T[];
 
   try {
     await page.goto("https://example.com");
     res = await page.evaluate(
-      // eslint-disable-next-line no-eval
       (compatTest: string) => eval(compatTest),
       `(function() {
         return [${tests.join(",")}];
