@@ -20,13 +20,23 @@ function versionIsRange(version: string): boolean {
 }
 
 /**
- * Parse version from caniuse and compare with parsed version from browserslist.
+ * Check if the parsed version from browserslist is covered by a version from
+ * caniuse. A caniuse version is either a range or a single version:
+ *
+ * - range, ex. "10.0-10.2": covers every version from 10.0 up to and including 10.2
+ * - single version, ex. "10.3": only covers 10.3
+ * - not a number, ex. "all" or "TP": covers nothing
  */
-function areVersionsEqual(
+function isVersionInRange(
   targetVersion: number,
   statsVersion: string
 ): boolean {
-  return targetVersion === parseFloat(statsVersion);
+  if (!versionIsRange(statsVersion)) {
+    return targetVersion === parseFloat(statsVersion);
+  }
+
+  const [lowerBound, upperBound] = statsVersion.split("-").map(parseFloat);
+  return lowerBound <= targetVersion && targetVersion <= upperBound;
 }
 
 /*
@@ -49,22 +59,21 @@ function isSupportedByCanIUse(
 
   const targetStats = stats[target];
 
-  if (typeof version === "string" && versionIsRange(version)) {
-    return Object.keys(targetStats).some((statsVersion: string): boolean =>
-      versionIsRange(statsVersion) &&
-      areVersionsEqual(parsedVersion, statsVersion)
-        ? !targetStats[statsVersion].includes("y")
-        : true
-    );
-  }
+  // Versions are grouped differently between caniuse-lite versions (ex. 10.0-10.2
+  // vs 10.0-10.3), so fall back to the record that the target's lowest version is in
+  const statsVersion =
+    version in targetStats
+      ? version
+      : Object.keys(targetStats).find((key: string): boolean =>
+          isVersionInRange(parsedVersion, key)
+        );
 
   // @TODO: This assumes that all versions are included in the cainuse db. If this is incorrect,
-  //        this will return false negatives. To properly do this, we have to to range comparisons.
+  //        this will return false negatives.
   //        Ex. given query for 50 and only version 40 exists in db records, return true
-  if (!(version in targetStats)) return true;
-  if (!targetStats[version]) return true;
+  if (statsVersion === undefined || !targetStats[statsVersion]) return true;
 
-  return targetStats[version].includes("y");
+  return targetStats[statsVersion].includes("y");
 }
 
 /**

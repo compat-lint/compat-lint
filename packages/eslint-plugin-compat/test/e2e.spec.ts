@@ -844,6 +844,31 @@ ruleTester.run("compat", rule, {
         },
       ],
     },
+    // https://github.com/amilajack/eslint-plugin-compat/issues/670
+    {
+      code: "requestIdleCallback(() => {})",
+      settings: {
+        browsers: ["iOS >= 11.3", "android >= 63"],
+      },
+      errors: [
+        {
+          message:
+            "requestIdleCallback is not supported in iOS Safari 11.3-11.4",
+        },
+      ],
+    },
+    {
+      code: "window.requestIdleCallback(() => {})",
+      settings: {
+        browsers: ["ios_saf 12"],
+      },
+      errors: [
+        {
+          message:
+            "requestIdleCallback is not supported in iOS Safari 12.0-12.1",
+        },
+      ],
+    },
     {
       code: "window.requestAnimationFrame(() => {})",
       settings: {
