@@ -4,7 +4,7 @@ import { mkdirSync, existsSync } from "fs";
 import simpleGit, { SimpleGit } from "simple-git";
 import { ESLint } from "eslint";
 import globals from "globals";
-import compat from "../src/index";
+import compat from "@compat-lint/eslint-plugin-compat";
 import {
   parser as typescriptEslintParser,
   plugin as typescriptEslintPlugin,
@@ -43,8 +43,8 @@ const repos: Array<RepoInfo> = [
     filePatterns: [path.join("js", "src"), path.join("js", "tests"), "build"],
     eslintOptions: {
       cwd: path.join(projectRoot, reposDir, "bootstrap"),
-      useEslintrc: false,
-      // @ts-expect-error Bug?
+      overrideConfigFile: true,
+      allowInlineConfig: false,
       baseConfig: [
         compat.configs["flat/recommended"],
         {
@@ -69,12 +69,12 @@ const repos: Array<RepoInfo> = [
     browserslist: ["electron 7.1.13"],
     eslintOptions: {
       cwd: path.join(projectRoot, reposDir, "electron-react-boilerplate"),
-      extensions: [".js", ".jsx", ".ts", ".tsx"],
-      useEslintrc: false,
-      // @ts-expect-error Bug?
+      overrideConfigFile: true,
+      allowInlineConfig: false,
       baseConfig: [
         compat.configs["flat/recommended"],
         {
+          files: ["**/*.{js,jsx,ts,tsx}"],
           plugins: {
             "@typescript-eslint": typescriptEslintPlugin,
           },
@@ -103,11 +103,14 @@ const repos: Array<RepoInfo> = [
     filePatterns: ["."],
     eslintOptions: {
       cwd: path.join(projectRoot, reposDir, "handlebars.js"),
-      extensions: [".js"],
-      useEslintrc: false,
-      // @ts-expect-error Bug?
+      overrideConfigFile: true,
+      allowInlineConfig: false,
       baseConfig: [
         compat.configs["flat/recommended"],
+        {
+          // precompiler output fragments, not valid JS on their own
+          ignores: ["spec/expected/"],
+        },
         {
           languageOptions: {
             parserOptions: {
@@ -128,11 +131,14 @@ const repos: Array<RepoInfo> = [
     filePatterns: ["src/**/*.js", "test/**/*.js"],
     eslintOptions: {
       cwd: path.join(projectRoot, reposDir, "jquery"),
-      extensions: [".js"],
-      useEslintrc: false,
-      // @ts-expect-error Bug?
+      overrideConfigFile: true,
+      allowInlineConfig: false,
       baseConfig: [
         compat.configs["flat/recommended"],
+        {
+          // JSON served with a .js extension
+          ignores: ["test/data/json_obj.js"],
+        },
         {
           languageOptions: {
             globals: {
@@ -156,9 +162,8 @@ const repos: Array<RepoInfo> = [
     filePatterns: ["*.js"],
     eslintOptions: {
       cwd: path.join(projectRoot, reposDir, "preact"),
-      extensions: [".js"],
-      useEslintrc: false,
-      // @ts-expect-error Bug?
+      overrideConfigFile: true,
+      allowInlineConfig: false,
       baseConfig: [
         compat.configs["flat/recommended"],
         {
@@ -217,15 +222,26 @@ const repos: Array<RepoInfo> = [
     filePatterns: ["."],
     eslintOptions: {
       cwd: path.join(projectRoot, reposDir, "create-react-app"),
-      extensions: [".js"],
-      useEslintrc: false,
-      // @ts-expect-error Bug?
+      overrideConfigFile: true,
+      allowInlineConfig: false,
       baseConfig: [
         compat.configs["flat/recommended"],
         {
+          ignores: [
+            // Flow
+            "packages/react-error-overlay/",
+            // Flow and intentionally broken syntax
+            "packages/react-scripts/fixtures/kitchensink/template/src/features/syntax/AsyncAwait.js",
+            "test/fixtures/issue-5176-flow-class-properties/",
+            "test/fixtures/webpack-message-formatting/src/AppBabel.js",
+            // CommonJS script with a top-level return
+            "packages/create-react-app/createReactApp.js",
+          ],
+        },
+        {
           files: ["**/*.ts?(x)"],
           languageOptions: {
-            parser: "@typescript-eslint/parser",
+            parser: typescriptEslintParser,
             parserOptions: {
               ecmaVersion: 2022,
               sourceType: "module",
@@ -268,9 +284,8 @@ const repos: Array<RepoInfo> = [
     filePatterns: ["."],
     eslintOptions: {
       cwd: path.join(projectRoot, reposDir, "aframe"),
-      extensions: [".js"],
-      useEslintrc: false,
-      // @ts-expect-error Bug?
+      overrideConfigFile: true,
+      allowInlineConfig: false,
       baseConfig: [
         compat.configs["flat/recommended"],
         {
@@ -300,12 +315,12 @@ const repos: Array<RepoInfo> = [
     filePatterns: ["test", "bundles", "packages", "tools"],
     eslintOptions: {
       cwd: path.join(projectRoot, reposDir, "pixi.js"),
-      extensions: [".js", ".ts"],
-      useEslintrc: false,
-      // @ts-expect-error Bug?
+      overrideConfigFile: true,
+      allowInlineConfig: false,
       baseConfig: [
         compat.configs["flat/recommended"],
         {
+          files: ["**/*.{js,ts}"],
           plugins: {
             "@typescript-eslint": typescriptEslintPlugin,
           },
@@ -343,7 +358,6 @@ export async function initRepo(
     if (showLogs)
       console.log(`${location} not found, proceeding to clone from remote`);
     await git.clone(remoteLink, location);
-    git.init();
   }
   await git.cwd(location);
   await git.checkout(targetCommitId);
