@@ -834,6 +834,17 @@ ruleTester.run("compat", rule, {
       ],
     },
     {
+      code: "globalThis.requestIdleCallback(() => {})",
+      settings: {
+        browsers: ["safari 12"],
+      },
+      errors: [
+        {
+          message: "requestIdleCallback is not supported in Safari 12",
+        },
+      ],
+    },
+    {
       code: "window.requestIdleCallback(() => {})",
       settings: {
         browsers: ["safari 12"],
@@ -852,6 +863,28 @@ ruleTester.run("compat", rule, {
       errors: [
         {
           message: "requestAnimationFrame is not supported in op_mini all",
+        },
+      ],
+    },
+    {
+      code: "window.requestAnimationFrame(() => {})",
+      settings: {
+        browsers: ["ie 9"],
+      },
+      errors: [
+        {
+          message: "requestAnimationFrame is not supported in IE 9",
+        },
+      ],
+    },
+    {
+      code: "globalThis.requestAnimationFrame(() => {})",
+      settings: {
+        browsers: ["ie 9"],
+      },
+      errors: [
+        {
+          message: "requestAnimationFrame is not supported in IE 9",
         },
       ],
     },
