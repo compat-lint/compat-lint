@@ -1,5 +1,12 @@
 ## [7.0.2](https://github.com/amilajack/eslint-plugin-compat/compare/v7.0.1...v7.0.2) (2026-04-29)
 
+## 8.0.2
+
+### Patch Changes
+
+- 41582a3: Fix caniuse-based rules not being reported for targets with a version range (e.g. `ios_saf 11.3-11.4`)
+- @compat-lint/ast-metadata-inferer@8.0.2
+
 ## 8.0.1
 
 ### Patch Changes

@@ -1,6 +1,6 @@
 {
   "name": "@compat-lint/eslint-plugin-compat",
-  "version": "8.0.1",
+  "version": "8.0.2",
   "description": "Lint browser compatibility of API used",
   "keywords": [
     "eslint",
