@@ -1,6 +1,6 @@
 {
   "name": "@compat-lint/ast-metadata-inferer",
-  "version": "8.0.1",
+  "version": "8.0.2",
   "main": "compat.json",
   "repository": {
     "type": "git",
