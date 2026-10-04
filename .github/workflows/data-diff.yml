@@ -12,6 +12,8 @@ permissions:
 jobs:
   diff:
     runs-on: ubuntu-latest
+    outputs:
+      comment: ${{ steps.summary.outputs.comment }}
     steps:
       - name: Check out pull request
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -45,7 +47,20 @@ jobs:
         working-directory: head
         run: pnpm install --frozen-lockfile && pnpm --filter @compat-lint/ast-metadata-inferer run compat
       - name: Summarize changes
-        run: head/.github/scripts/compat-diff.sh base/packages/ast-metadata-inferer/compat.json head/packages/ast-metadata-inferer/compat.json >> "$GITHUB_STEP_SUMMARY"
+        id: summary
+        run: |
+          summarize() {
+            head/.github/scripts/compat-diff.sh base/packages/ast-metadata-inferer/compat.json head/packages/ast-metadata-inferer/compat.json
+          }
+          summarize >> "$GITHUB_STEP_SUMMARY"
+          # A comment is limited to 65536 characters, so it lists fewer records.
+          # The delimiter is random, as the summary contains data of the pull request
+          delimiter="$(openssl rand -hex 16)"
+          {
+            echo "comment<<$delimiter"
+            LIMIT=150 summarize
+            echo "$delimiter"
+          } >> "$GITHUB_OUTPUT"
       - name: Upload data
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
@@ -54,3 +69,36 @@ jobs:
             base/packages/ast-metadata-inferer/compat.json
             head/packages/ast-metadata-inferer/compat.json
           retention-days: 7
+  # Does not check out or run the code of the pull request, as it can write to pull requests
+  comment:
+    needs: diff
+    # The token of a pull request from a fork is read-only
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Comment on pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PULL_REQUEST: ${{ github.event.pull_request.number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SUMMARY: ${{ needs.diff.outputs.comment }}
+        run: |
+          marker='<!-- compat-data-diff -->'
+          comment_id="$(
+            gh api "repos/$REPO/issues/$PULL_REQUEST/comments" --paginate \
+              --jq ".[] | select(.body | startswith(\"$marker\")) | .id" | head -n 1
+          )"
+          # Only start commenting once the data changes, then keep the comment up to date
+          if [ -z "$comment_id" ] && ! grep -Eq '^\| (Added|Removed|Changed) \| [1-9]' <<< "$SUMMARY"; then
+            echo "No changes to compat.json"
+            exit 0
+          fi
+          printf '%s\n%s\n\n[Full summary and data](%s)\n' "$marker" "$SUMMARY" "$RUN_URL" > comment.md
+          if [ -n "$comment_id" ]; then
+            gh api --method PATCH "repos/$REPO/issues/comments/$comment_id" -F body=@comment.md --silent
+          else
+            gh api --method POST "repos/$REPO/issues/$PULL_REQUEST/comments" -F body=@comment.md --silent
+          fi
