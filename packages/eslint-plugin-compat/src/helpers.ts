@@ -75,8 +75,11 @@ function chainReferencesApi(
   chain: string[],
   rule: AstMetadataApiWithTargetsResolver
 ): boolean {
+  // A global object on its own is the API itself, ex. `typeof globalThis`
   const names = chain.filter(
-    (name, i) => name !== "prototype" && !(i === 0 && GLOBAL_OBJECTS.has(name))
+    (name, i) =>
+      name !== "prototype" &&
+      !(i === 0 && chain.length > 1 && GLOBAL_OBJECTS.has(name))
   );
   if (!rule.property) return names[0] === rule.object;
   // Rules can use the interface name (ex. `Crypto`) of a global (ex. `crypto`)
@@ -468,6 +471,17 @@ export function lintMemberExpression(
     node.object.name === "window" ||
     node.object.name === "globalThis"
   ) {
+    // `globalThis` is skipped to find the API it is used for, but is an API itself
+    const globalThisRule =
+      node.object.name === "globalThis" && rulesMap.get("globalThis");
+    if (globalThisRule) {
+      reportUnlessGuarded(
+        context,
+        handleFailingRule,
+        globalThisRule,
+        node.object
+      );
+    }
     const rawProtoChain = protoChainFromMemberExpression(node);
     const [firstObj] = rawProtoChain;
     const protoChain =
