@@ -15,7 +15,7 @@ describe("CanIUseProvider", () => {
     );
     const targets = parseBrowsersListVersion(config);
     const result = getUnsupportedTargets(node, targets);
-    expect(result).toMatchSnapshot();
+    expect(result).toEqual(["iOS Safari 10.0-10.2"]);
   });
 
   it("should match targets that are within a caniuse version range", () => {
