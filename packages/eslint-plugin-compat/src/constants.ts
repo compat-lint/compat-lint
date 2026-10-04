@@ -1,3 +1,4 @@
+// Keyed by the browser ids browserslist returns (the caniuse agent ids), plus node
 export interface TargetNameMappings {
   chrome: "Chrome";
   firefox: "Firefox";
@@ -7,18 +8,16 @@ export interface TargetNameMappings {
   ie_mob: "IE Mobile";
   edge: "Edge";
   baidu: "Baidu";
-  electron: "Electron";
-  blackberry_browser: "Blackberry Browser";
-  edge_mobile: "Edge Mobile";
+  bb: "Blackberry Browser";
   and_uc: "Android UC Browser";
-  and_chrome: "Android Chrome";
-  and_firefox: "Android Firefox";
-  and_webview: "Android Webview";
-  and_samsung: "Samsung Browser";
-  and_opera: "Opera Android";
+  and_chr: "Android Chrome";
+  and_ff: "Android Firefox";
+  and_qq: "QQ Browser";
+  android: "Android Browser";
+  samsung: "Samsung Browser";
   opera: "Opera";
-  opera_mini: "Opera Mini";
-  opera_mobile: "Opera Mobile";
+  op_mini: "Opera Mini";
+  op_mob: "Opera Mobile";
   node: "Node.js";
   kaios: "KaiOS";
 }
@@ -34,18 +33,16 @@ export const STANDARD_TARGET_NAME_MAPPING: Readonly<TargetNameMappings> = {
   ie_mob: "IE Mobile",
   edge: "Edge",
   baidu: "Baidu",
-  electron: "Electron",
-  blackberry_browser: "Blackberry Browser",
-  edge_mobile: "Edge Mobile",
+  bb: "Blackberry Browser",
   and_uc: "Android UC Browser",
-  and_chrome: "Android Chrome",
-  and_firefox: "Android Firefox",
-  and_webview: "Android Webview",
-  and_samsung: "Samsung Browser",
-  and_opera: "Opera Android",
+  and_chr: "Android Chrome",
+  and_ff: "Android Firefox",
+  and_qq: "QQ Browser",
+  android: "Android Browser",
+  samsung: "Samsung Browser",
   opera: "Opera",
-  opera_mini: "Opera Mini",
-  opera_mobile: "Opera Mobile",
+  op_mini: "Opera Mini",
+  op_mob: "Opera Mobile",
   node: "Node.js",
   kaios: "KaiOS",
 };
