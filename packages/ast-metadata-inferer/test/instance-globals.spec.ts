@@ -18,12 +18,14 @@ describe("Instance globals", () => {
     expect(instanceGlobals.get("document")).toEqual("Document");
     // Nullable attributes
     expect(instanceGlobals.get("visualViewport")).toEqual("VisualViewport");
+    // Attributes that can be undefined: `(Event or undefined) event`
+    expect(instanceGlobals.get("event")).toEqual("Event");
   });
 
   it("should not infer an interface for other globals", async () => {
     const instanceGlobals = await getInstanceGlobals();
-    // long, DOMString, WindowProxy, (Event or undefined), EventHandler
-    ["innerWidth", "name", "self", "event", "onload"].forEach((name) => {
+    // long, DOMString, WindowProxy, any, EventHandler
+    ["innerWidth", "name", "self", "opener", "onload"].forEach((name) => {
       expect(instanceGlobals.has(name)).toBe(false);
     });
     // Operations and names that are not part of Window

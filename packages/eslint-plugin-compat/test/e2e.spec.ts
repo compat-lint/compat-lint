@@ -568,7 +568,7 @@ ruleTester.run("compat", rule, {
       code: "crypto.randomUUID()",
       settings: { browsers: ["chrome 52"], polyfills: ["Crypto"] },
     },
-    // Globals are not matched to an interface because the names only differ in case
+    // Globals are only matched to an interface by their type, not by a similar name
     {
       code: "origin.isSameOrigin(other)",
       // `origin` is a string, not an instance of the `Origin` interface that
@@ -576,10 +576,13 @@ ruleTester.run("compat", rule, {
       settings: { browsers: ["chrome 100"] },
     },
     {
-      code: "event.composedPath()",
-      // `Event.composedPath()` is missing in Chrome 52, but the type of the legacy
-      // `event` global is `(Event or undefined)` and is not inferred
+      code: "element.addEventListener('click', (event) => event.composedPath())",
+      // The parameter is not the legacy `event` global, which is an `Event`
       settings: { browsers: ["chrome 52"] },
+    },
+    {
+      code: "event.composedPath()",
+      settings: { browsers: ["chrome 53"] },
     },
     // globalThis
     {
@@ -1576,6 +1579,25 @@ ruleTester.run("compat", rule, {
       errors: [
         {
           message: "customElements.define() is not supported in Safari 10",
+        },
+      ],
+    },
+    {
+      code: "event.composedPath()",
+      // The type of the legacy `event` global is `(Event or undefined)`
+      settings: { browsers: ["chrome 52"] },
+      errors: [
+        {
+          message: "event.composedPath() is not supported in Chrome 52",
+        },
+      ],
+    },
+    {
+      code: "window.event.composed",
+      settings: { browsers: ["chrome 52"] },
+      errors: [
+        {
+          message: "event.composed is not supported in Chrome 52",
         },
       ],
     },

@@ -25,6 +25,22 @@ type WebrefIdl = {
 const { parseAll }: WebrefIdl = require("@webref/idl");
 
 /**
+ * Get the name of the type if it is a single type, ex. `Storage` or `long`.
+ * A union with `undefined` is the type that can be missing, ex. `Event` for
+ * `(Event or undefined)`
+ */
+function singleTypeName({
+  idlType,
+  generic,
+  union,
+}: IdlType): string | undefined {
+  if (typeof idlType === "string") return generic ? undefined : idlType;
+  if (!union) return undefined;
+  const types = idlType.filter((type) => type.idlType !== "undefined");
+  return types.length === 1 ? singleTypeName(types[0]) : undefined;
+}
+
+/**
  * Get the globals of a window that are an instance of an interface, with the name
  * of that interface. ex. `localStorage` => `Storage`
  *
@@ -63,17 +79,10 @@ export default async function getInstanceGlobals(): Promise<
     .flatMap((definition) => definition.members ?? [])
     .forEach(({ type, name, idlType }) => {
       if (type !== "attribute" || !name || !idlType) return;
-      // Only a single interface, ex. not `long innerWidth`, `WindowProxy self`
-      // or `(Event or undefined) event`
-      if (
-        idlType.union ||
-        idlType.generic ||
-        typeof idlType.idlType !== "string" ||
-        !interfaces.has(idlType.idlType)
-      ) {
-        return;
-      }
-      instanceGlobals.set(name, idlType.idlType);
+      // Only interfaces, ex. not `long innerWidth` or `WindowProxy self`
+      const typeName = singleTypeName(idlType);
+      if (!typeName || !interfaces.has(typeName)) return;
+      instanceGlobals.set(name, typeName);
     });
 
   return instanceGlobals;
