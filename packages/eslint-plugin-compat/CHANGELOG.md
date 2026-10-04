@@ -1,5 +1,37 @@
 ## [7.0.2](https://github.com/amilajack/eslint-plugin-compat/compare/v7.0.1...v7.0.2) (2026-04-29)
 
+## 8.1.0
+
+### Minor Changes
+
+- 7f3dc63: Check MDN compat data for Android targets (`android`, `and_chr`, `and_ff`, `samsung`, `op_mob`), which were never matched before
+- 05dea93: Check every targeted version of each browser instead of only the lowest one, so an API is also reported if it was removed (e.g. `navigator.getBattery()` with Firefox 51 and Firefox 100) or is missing in versions in between (e.g. `AbortSignal.abort()` in Node.js 15.0 to 15.11). Messages still name one version per browser: the lowest unsupported one
+- 393cebd: Check the members of instance globals such as `localStorage.getItem()`, `caches.open()`, `customElements.define()` or `indexedDB.databases()`. Compat data lists them by interface (`Storage.getItem`), so the interface of each global is now inferred from the WebIDL definitions in `@webref/idl`. Messages name these APIs as in the code (`crypto.randomUUID()` instead of `Crypto.randomUUID()`); the interface names still work in the `polyfills` setting. Looking up members of browser globals is also much faster
+- d410509: Use all MDN support statements of a browser instead of only the first one. An API is supported in the versions between `version_added` and `version_removed` of any statement that is not prefixed, renamed or behind a flag. This no longer reports APIs with an earlier implementation (e.g. `document.body` in Firefox before 60, `AbortController` in Safari 11.1), and now reports APIs that were removed (e.g. `navigator.getBattery()` in Firefox since 52) or only exist prefixed (e.g. `SpeechRecognition` in Safari)
+- 908436e: Only suppress errors inside an `if` when it checks the reported API. Previously any `if` hid errors, e.g. `if (isLoggedIn) { fetch() }` or the `else` branch of `if (window.fetch)`. Errors are suppressed in the branch where the check guarantees the API (e.g. `else` of `if (!window.fetch)`, or `typeof fetch === 'function'`), in the check itself, and after an early exit when the API is missing, including in callbacks. Use `// eslint-disable-next-line compat/compat` where the API is checked elsewhere
+- 3f63070: Report the `WebAssembly` JS API (e.g. `WebAssembly.compile()`, `WebAssembly.promising()`), which BCD lists in its own `webassembly` category and was therefore never checked
+
+### Patch Changes
+
+- 41582a3: Fix caniuse-based rules not being reported for targets with a version range (e.g. `ios_saf 11.3-11.4`)
+- a9fa049: Recognize feature checks in conditional and logical expressions (e.g. `window.fetch ? fetch() : polyfill()`, `window.fetch && fetch()`, `window.fetch || polyfill`), and do not report assignments to an API (e.g. the polyfill `window.Promise = Polyfill`). Calling an API inside a condition (e.g. `if (fetch()) {}`) is reported as a use
+- aee3e2b: Do not report `Promise` and typed arrays when ES APIs are polyfilled, that is with `polyfills: ["es:all"]` or a detected Babel config. Their rules use caniuse data and were not treated as ES APIs, unlike e.g. `Array.from()` or `Promise.allSettled()`
+- 5d53ae0: Only name an API as a method in error messages when it is called: `Array.from()` for `Array.from([])`, but `location.origin`, `navigator.serviceWorker` and `WebAssembly.Module` instead of `location.origin()`, `navigator.serviceWorker()` and `WebAssembly.Module()`
+- c3d223e: Test-only change: enable the test for an API that is accessed with optional chaining on `window` (`window?.fetch`), which is reported correctly
+- 40564dc: Fix polyfills of instance methods that are named with `.prototype.` as documented, e.g. `polyfills: ["Array.prototype.flat"]`. Before, only the name without it (`Array.flat`) had an effect, which still works
+- 7f3dc63: Show browser names instead of browserslist ids in error messages (e.g. `Opera Mini` instead of `op_mini`, `Android Browser` instead of `android`)
+- 330eacf: Report `globalThis` itself when it is used to access another API, e.g. `globalThis.fetch()` in IE 11. Before, only the accessed API was checked
+- a62b0d5: Use scope analysis to decide if a name refers to a local declaration instead of the global API. A declaration that is not visible from the usage (e.g. a parameter `fetch` of another function), or a mere use of the name (e.g. the object key in `{ fetch: true }`), no longer hides errors for the whole file. Declarations such as `catch (fetch)` or `import { Map }` followed by `new Map().size` are now recognized
+- bf03a41: Only treat an early return as a feature check when it tests the reported API: `if (!navigator.onLine) return;` no longer hides an unsupported `navigator.serviceWorker`. Guards using optional chaining (e.g. `if (!navigator?.serviceWorker) return;`) are now recognized
+- 4787acb: Test-only changes: run the previously ignored `helpers.spect.ts` as `helpers.spec.ts`, and assert the caniuse range result inline instead of with a snapshot
+- Updated dependencies [393cebd]
+- Updated dependencies [28c6f4e]
+- Updated dependencies [f33c853]
+- Updated dependencies [78369c4]
+- Updated dependencies [4787acb]
+- Updated dependencies [3f63070]
+  - @compat-lint/ast-metadata-inferer@8.1.0
+
 ## 8.0.1
 
 ### Patch Changes
