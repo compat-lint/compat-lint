@@ -466,6 +466,41 @@ ruleTester.run("compat", rule, {
       `,
       settings: { browsers: ["ie 9"] },
     },
+    // Declarations that are visible from the usage
+    {
+      code: `
+        import { Map } from 'immutable';
+        new Map().size;
+      `,
+      settings: { browsers: ["ie 8"] },
+    },
+    {
+      code: `
+        function load({ fetch }) {
+          return fetch('/api/data');
+        }
+      `,
+      settings: { browsers: ["ie 11"] },
+    },
+    {
+      code: `
+        try {
+          run();
+        } catch (fetch) {
+          fetch('/api/data');
+        }
+      `,
+      settings: { browsers: ["ie 11"] },
+    },
+    {
+      code: `
+        class Set {}
+        function create() {
+          return [new Set(), () => new Set()];
+        }
+      `,
+      settings: { browsers: ["ie 9"] },
+    },
     {
       code: "document.documentElement()",
       settings: { browsers: ["Safari 11", "Opera 57", "Edge 17"] },
@@ -935,6 +970,51 @@ ruleTester.run("compat", rule, {
           message: "Set is not supported in IE 9",
         },
       ],
+    },
+    // Declarations of the same name that are not visible from the usage
+    {
+      code: `
+        function stub(fetch) {}
+        fetch('/api/data');
+      `,
+      settings: { browsers: ["ie 11"] },
+      errors: [{ message: "fetch is not supported in IE 11" }],
+    },
+    {
+      code: `
+        function outer() {
+          const Set = stub;
+        }
+        new Set();
+      `,
+      settings: { browsers: ["ie 9"] },
+      errors: [{ message: "Set is not supported in IE 9" }],
+    },
+    {
+      code: `
+        items.map(Set => Set.id);
+        new Set();
+      `,
+      settings: { browsers: ["ie 9"] },
+      errors: [{ message: "Set is not supported in IE 9" }],
+    },
+    // Names that are used but not declared
+    {
+      code: `
+        const options = { fetch: true };
+        const load = fetch;
+        const get = () => fetch;
+        fetch('/api/data');
+      `,
+      settings: { browsers: ["ie 11"] },
+      errors: [{ message: "fetch is not supported in IE 11" }],
+    },
+    {
+      code: "fetch('/api/data')",
+      // A global from the config is not a declaration in the file
+      languageOptions: { globals: { fetch: "readonly" } },
+      settings: { browsers: ["ie 11"] },
+      errors: [{ message: "fetch is not supported in IE 11" }],
     },
     {
       code: "new Set()",
