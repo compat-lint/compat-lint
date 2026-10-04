@@ -33,21 +33,6 @@ exports[`e2e Repo Tests should match lint result snapshots 1`] = `
       ],
       "name": "bootstrap",
     },
-    {
-      "errorCount": 1,
-      "messages": [
-        {
-          "column": 11,
-          "endColumn": 22,
-          "endLine": 85,
-          "line": 85,
-          "message": "Promise.all() is not supported in Opera Mini all, IE 10, Android Browser 4.4",
-          "ruleId": "compat/compat",
-          "severity": 2,
-        },
-      ],
-      "name": "bootstrap",
-    },
   ],
   [],
   [

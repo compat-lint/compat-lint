@@ -94,6 +94,11 @@ export function getUnsupportedTargets(
     .map(formatTargetNames);
 }
 
+// Features that are part of ECMAScript and can be polyfilled. Like the ES APIs
+// from MDN, they are not linted if the ES APIs are polyfilled.
+// `js-regexp-lookbehind` is syntax, which can not be polyfilled.
+const ES_FEATURES = new Set(["promises", "typedarrays"]);
+
 const CanIUseProvider: Array<AstMetadataApiWithTargetsResolver> = [
   // new ServiceWorker()
   {
@@ -265,6 +270,7 @@ const CanIUseProvider: Array<AstMetadataApiWithTargetsResolver> = [
   },
 ].map((rule) => ({
   ...rule,
+  kind: ES_FEATURES.has(rule.caniuseId) ? ("es" as const) : undefined,
   getUnsupportedTargets,
   id: rule.property ? `${rule.object}.${rule.property}` : rule.object,
   protoChainId: rule.property ? `${rule.object}.${rule.property}` : rule.object,
