@@ -568,6 +568,19 @@ ruleTester.run("compat", rule, {
       code: "crypto.randomUUID()",
       settings: { browsers: ["chrome 52"], polyfills: ["Crypto"] },
     },
+    // Globals are not matched to an interface because the names only differ in case
+    {
+      code: "origin.isSameOrigin(other)",
+      // `origin` is a string, not an instance of the `Origin` interface that
+      // has `isSameOrigin()` since Chrome 145
+      settings: { browsers: ["chrome 100"] },
+    },
+    {
+      code: "event.composedPath()",
+      // `Event.composedPath()` is missing in Chrome 52, but the type of the legacy
+      // `event` global is `(Event or undefined)` and is not inferred
+      settings: { browsers: ["chrome 52"] },
+    },
     // globalThis
     {
       code: "globalThis.setTimeout(run)",
