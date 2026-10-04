@@ -218,11 +218,46 @@ function checkGuarantee(
 }
 
 /**
+ * Check if the API is used rather than checked, ex. `fetch()` or
+ * `navigator.serviceWorker.register()`
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function isCalled(node: any): boolean {
+  if (node.type === "CallExpression" || node.type === "NewExpression") {
+    return true;
+  }
+  let current = node;
+  while (
+    (current.parent?.type === "MemberExpression" &&
+      current.parent.object === current) ||
+    current.parent?.type === "ChainExpression"
+  ) {
+    current = current.parent;
+  }
+  const { parent } = current;
+  return (
+    (parent?.type === "CallExpression" || parent?.type === "NewExpression") &&
+    parent.callee === current
+  );
+}
+
+/**
+ * Check if the API is assigned to, ex. by a polyfill: `window.Promise = Polyfill`
+ */
+function isAssigned(node: ESLintNode): boolean {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const parent: any = node.parent;
+  return parent?.type === "AssignmentExpression" && parent.left === node;
+}
+
+/**
  * Check if a node is guarded by a feature check of the API of the rule:
  *
  *   if (document.currentScript) {}          // <-- the check itself
  *   if ('fetch' in window) { fetch(); }     // <-- in the branch where the API exists
  *   if (!fetch) { polyfill(); } else { fetch(); }
+ *   window.fetch ? fetch() : polyfill();
+ *   window.fetch && fetch();
  *
  *   if (!('fetch' in window)) { return; }   // <-- after an early exit when it is missing
  *   fetch();
@@ -233,18 +268,34 @@ function isGuardedByFeatureCheck(
   node: ESLintNode,
   rule: AstMetadataApiWithTargetsResolver
 ): boolean {
+  // A call is a use of the API even inside a condition, ex. `if (fetch()) {}`
+  const isCheck = !isCalled(node);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let current: any = node;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let parent: any = node.parent;
 
   while (parent) {
-    if (parent.type === "IfStatement") {
+    if (
+      parent.type === "IfStatement" ||
+      parent.type === "ConditionalExpression"
+    ) {
       if (current === parent.test) {
-        if (expressionReferencesApi(parent.test, rule)) return true;
+        if (isCheck && expressionReferencesApi(parent.test, rule)) return true;
       } else {
         const { whenTrue, whenFalse } = checkGuarantee(parent.test, rule);
         if (current === parent.consequent ? whenTrue : whenFalse) return true;
+      }
+    }
+    if (parent.type === "LogicalExpression") {
+      if (current === parent.left) {
+        // ex. `window.fetch || polyfill`
+        if (isCheck && expressionReferencesApi(parent.left, rule)) return true;
+      } else {
+        // ex. `window.fetch && fetch()` or `!window.fetch || fetch()`
+        const { whenTrue, whenFalse } = checkGuarantee(parent.left, rule);
+        if (parent.operator === "&&" && whenTrue) return true;
+        if (parent.operator === "||" && whenFalse) return true;
       }
     }
     if (
@@ -276,6 +327,7 @@ function reportUnlessGuarded(
   failingRule: AstMetadataApiWithTargetsResolver,
   node: ESLintNode
 ) {
+  if (isAssigned(node)) return;
   if (
     context.settings?.ignoreConditionalChecks === true ||
     !isGuardedByFeatureCheck(node, failingRule)
