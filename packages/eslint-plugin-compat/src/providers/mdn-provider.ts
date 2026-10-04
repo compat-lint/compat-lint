@@ -1,4 +1,5 @@
 import apiMetadata from "@compat-lint/ast-metadata-inferer";
+import memoize from "lodash.memoize";
 import semver from "semver";
 import { ApiMetadata } from "@compat-lint/ast-metadata-inferer/lib/types";
 import { reverseTargetMappings } from "../helpers";
@@ -66,6 +67,11 @@ function customCoerce(version: string): string {
   return version.length === 1 ? [version, 0, 0].join(".") : version;
 }
 
+// The same few versions are compared for every API and target
+const coerceVersion = memoize((version: string): semver.SemVer | undefined => {
+  return semver.coerce(customCoerce(version)) ?? undefined;
+});
+
 type SupportStatement = NonNullable<
   ApiMetadata["compat"]["support"][keyof ApiMetadata["compat"]["support"]]
 >;
@@ -97,8 +103,8 @@ function coversVersion(
   if (versionRemoved) {
     const semverRemoved =
       typeof versionRemoved === "string"
-        ? semver.coerce(customCoerce(versionRemoved))
-        : null;
+        ? coerceVersion(versionRemoved)
+        : undefined;
     if (!semverCurrent || !semverRemoved) return false;
     if (semver.gte(semverCurrent, semverRemoved)) return false;
   }
@@ -117,7 +123,7 @@ function coversVersion(
 
   // A browser supports an API if its version is greater than or equal
   // to the first version of the browser that API was added in
-  const semverAdded = semver.coerce(customCoerce(versionAdded));
+  const semverAdded = coerceVersion(versionAdded);
   // ex. `preview`, which is not released yet
   if (!semverAdded) return false;
 
@@ -148,8 +154,7 @@ export function isSupportedByMDN(
 
   // Special case for Safari TP: TP is always gte than any other releases
   const isSafariTP = target === "safari" && version === "TP";
-  const semverCurrent =
-    semver.coerce(customCoerce(String(version))) ?? undefined;
+  const semverCurrent = coerceVersion(String(version));
 
   // semver.coerce() might be null for non-semvers (other than Safari TP)
   // Just warn and treat features as supported here for now to avoid lint from

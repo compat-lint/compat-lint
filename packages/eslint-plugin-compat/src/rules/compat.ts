@@ -12,12 +12,13 @@ import memoize from "lodash.memoize";
 import path from "path";
 import {
   determineTargetsFromConfig,
+  getUnsupportedTargetNames,
   lintCallExpression,
   lintExpressionStatement,
   lintLiteral,
   lintMemberExpression,
   lintNewExpression,
-  parseBrowsersListVersion,
+  parseBrowsersListVersions,
   type RuleMap,
 } from "../helpers"; // will be deprecated and introduced to this file
 import { nodes } from "../providers";
@@ -143,7 +144,7 @@ const getRulesForTargets = memoize(
     nodes
       .filter((node) => (lintAllEsApis ? true : node.kind !== "es"))
       .forEach((node) => {
-        if (!node.getUnsupportedTargets(node, targets).length) return;
+        if (!getUnsupportedTargetNames(node, targets).length) return;
         byType[node.astNodeType].push(node);
       });
 
@@ -209,7 +210,7 @@ export default {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (context as any).sourceCode ?? (context as any).getSourceCode();
 
-    // Determine lowest targets from browserslist config, which reads user's
+    // Determine all targets from browserslist config, which reads user's
     // package.json config section. Use config from eslintrc for testing purposes
     const browserslistConfig: BrowserListConfig =
       context.settings?.browsers ||
@@ -237,7 +238,7 @@ export default {
       // Attempt to infer polyfilling of ES APIs from babel config
       (!context.settings?.polyfills?.includes("es:all") &&
         !isUsingTranspiler(browserslistDir));
-    const browserslistTargets = parseBrowsersListVersion(
+    const browserslistTargets = parseBrowsersListVersions(
       determineTargetsFromConfig(
         browserslistDir,
         browserslistConfig,
@@ -265,9 +266,9 @@ export default {
     ): string => {
       let message = unsupportedTargetsByRule.get(rule.id);
       if (message === undefined) {
-        message = rule
-          .getUnsupportedTargets(rule, browserslistTargets)
-          .join(", ");
+        message = getUnsupportedTargetNames(rule, browserslistTargets).join(
+          ", "
+        );
         unsupportedTargetsByRule.set(rule.id, message);
       }
       return message;

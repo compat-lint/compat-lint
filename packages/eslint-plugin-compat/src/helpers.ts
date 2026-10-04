@@ -559,25 +559,11 @@ export function determineTargetsFromConfig(
 }
 
 /**
- * Parses the versions that are given by browserslist. They're
- *
- * ```ts
- * parseBrowsersListVersion(['chrome 50'])
- *
- * {
- *   target: 'chrome',
- *   parsedVersion: 50,
- *   version: '50'
- * }
- * ```
- * @param targetslist - List of targest from browserslist api
- * @returns - The lowest version version of each target
+ * Parses the versions that are given by browserslist and sorts them by target
+ * name and then version number in descending order
  */
-export function parseBrowsersListVersion(
-  targetslist: Array<string>
-): Array<Target> {
+function parseAndSortTargets(targetslist: Array<string>): Array<Target> {
   return (
-    // Sort the targets by target name and then version number in ascending order
     targetslist
       .map((e: string): Target => {
         const [target, version] = e.split(" ") as [
@@ -610,12 +596,77 @@ export function parseBrowsersListVersion(
             : b.parsedVersion - a.parsedVersion;
         }
         return b.target > a.target ? 1 : -1;
-      }) // First last target always has the latest version
-      .filter(
-        (e: Target, i: number, items: Array<Target>): boolean =>
-          // Check if the current target is the last of its kind.
-          // If it is, then it's the most recent version.
-          i + 1 === items.length || e.target !== items[i + 1].target
-      )
+      })
   );
+}
+
+/**
+ * Parses the versions that are given by browserslist. They're
+ *
+ * ```ts
+ * parseBrowsersListVersion(['chrome 50'])
+ *
+ * {
+ *   target: 'chrome',
+ *   parsedVersion: 50,
+ *   version: '50'
+ * }
+ * ```
+ * @param targetslist - List of targest from browserslist api
+ * @returns - The lowest version version of each target
+ */
+export function parseBrowsersListVersion(
+  targetslist: Array<string>
+): Array<Target> {
+  return parseAndSortTargets(targetslist).filter(
+    (e: Target, i: number, items: Array<Target>): boolean =>
+      // Check if the current target is the last of its kind.
+      // If it is, then it's the lowest version.
+      i + 1 === items.length || e.target !== items[i + 1].target
+  );
+}
+
+/**
+ * Parses the versions that are given by browserslist like `parseBrowsersListVersion`,
+ * but returns every version of each target. An API is not only missing in the lowest
+ * version if it was added later: it can also be removed in a higher version, or be
+ * missing in versions in between.
+ *
+ * @param targetslist - List of targest from browserslist api
+ * @returns - All versions of each target, starting with its lowest version
+ */
+export function parseBrowsersListVersions(
+  targetslist: Array<string>
+): Array<Target> {
+  const targets = parseAndSortTargets(targetslist);
+  const versions: Array<Target> = [];
+  // Targets of the same kind follow each other with the highest version first
+  let end = targets.length;
+  while (end > 0) {
+    let start = end - 1;
+    while (start > 0 && targets[start - 1].target === targets[end - 1].target) {
+      start -= 1;
+    }
+    versions.unshift(...targets.slice(start, end).reverse());
+    end = start;
+  }
+  return versions;
+}
+
+/**
+ * Get the names of the targets that do not support the API of the rule. Only the
+ * first unsupported version of each target is named, which is the lowest version
+ * for targets from `parseBrowsersListVersions`.
+ */
+export function getUnsupportedTargetNames(
+  rule: AstMetadataApiWithTargetsResolver,
+  targets: Array<Target>
+): Array<string> {
+  const unsupported = new Set<string>();
+  return targets.flatMap((target) => {
+    if (unsupported.has(target.target)) return [];
+    const names = rule.getUnsupportedTargets(rule, [target]);
+    if (names.length) unsupported.add(target.target);
+    return names;
+  });
 }
