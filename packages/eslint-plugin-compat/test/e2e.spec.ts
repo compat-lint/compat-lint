@@ -1438,16 +1438,15 @@ ruleTester.run("compat", rule, {
         },
       ],
     },
-    // @TODO: Fix this edge case
-    // {
-    //   code: `window?.fetch`,
-    //   settings: { browsers: ["ie 9"] },
-    //   errors: [
-    //     {
-    //       message: "fetch is not supported in IE 9",
-    //     },
-    //   ],
-    // },
+    {
+      code: "window?.fetch",
+      settings: { browsers: ["ie 9"] },
+      errors: [
+        {
+          message: "fetch is not supported in IE 9",
+        },
+      ],
+    },
     {
       code: "Object.entries({}), Object.values({})",
       settings: {
