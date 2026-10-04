@@ -527,6 +527,30 @@ ruleTester.run("compat", rule, {
       code: "history.back()",
       settings: { browsers: ["Safari 11", "Opera 57", "Edge 17"] },
     },
+    // globalThis
+    {
+      code: "globalThis.setTimeout(run)",
+      settings: { browsers: ["chrome 71", "safari 12.1"] },
+    },
+    {
+      code: `
+        if (typeof globalThis !== 'undefined') {
+          globalThis.setTimeout(run)
+        }
+      `,
+      settings: { browsers: ["ie 11"] },
+    },
+    {
+      code: "globalThis.setTimeout(run)",
+      settings: { browsers: ["ie 11"], polyfills: ["globalThis"] },
+    },
+    {
+      code: `
+        const globalThis = window;
+        globalThis.setTimeout(run)
+      `,
+      settings: { browsers: ["ie 11"] },
+    },
     "document.querySelector()",
     {
       code: "new ServiceWorker()",
@@ -1169,6 +1193,28 @@ ruleTester.run("compat", rule, {
       settings: { browsers: ["ie 11"] },
       errors: [
         {
+          message: "globalThis is not supported in IE 11",
+        },
+        {
+          message: "fetch is not supported in IE 11",
+        },
+      ],
+    },
+    {
+      code: "globalThis.setTimeout(run)",
+      // Only `globalThis` itself is missing
+      settings: { browsers: ["ie 11", "chrome 70"] },
+      errors: [
+        {
+          message: "globalThis is not supported in IE 11, Chrome 70",
+        },
+      ],
+    },
+    {
+      code: "window.fetch()",
+      settings: { browsers: ["ie 11"] },
+      errors: [
+        {
           message: "fetch is not supported in IE 11",
         },
       ],
@@ -1316,6 +1362,9 @@ ruleTester.run("compat", rule, {
       },
       errors: [
         {
+          message: "globalThis is not supported in Safari 12",
+        },
+        {
           message: "requestIdleCallback is not supported in Safari 12",
         },
       ],
@@ -1384,6 +1433,9 @@ ruleTester.run("compat", rule, {
         browsers: ["ie 9"],
       },
       errors: [
+        {
+          message: "globalThis is not supported in IE 9",
+        },
         {
           message: "requestAnimationFrame is not supported in IE 9",
         },
