@@ -2,4 +2,3 @@ lib
 coverage
 metadata.json
 compat.json
-src/providers/ms-api-catalog/microsoft-api-catalog-data.json
