@@ -66,6 +66,64 @@ function customCoerce(version: string): string {
   return version.length === 1 ? [version, 0, 0].join(".") : version;
 }
 
+type SupportStatement = NonNullable<
+  ApiMetadata["compat"]["support"][keyof ApiMetadata["compat"]["support"]]
+>;
+type SimpleSupportStatement = Exclude<SupportStatement, unknown[]>;
+
+/**
+ * An implementation that is prefixed, has another name or is behind a flag
+ * can not be used under the name of the API
+ */
+function isUsable(statement: SimpleSupportStatement): boolean {
+  return !statement.prefix && !statement.alternative_name && !statement.flags;
+}
+
+/**
+ * Check if the version is in the range of versions the statement describes: from
+ * the version the API was added in up to the version it was removed in, if any.
+ *
+ * @param semverCurrent - undefined for Safari TP, which is gte than any other release
+ */
+function coversVersion(
+  statement: SimpleSupportStatement,
+  semverCurrent: semver.SemVer | undefined,
+  node: AstMetadataApiWithTargetsResolver,
+  target: string
+): boolean {
+  const { version_added: versionAdded, version_removed: versionRemoved } =
+    statement;
+
+  if (versionRemoved) {
+    const semverRemoved =
+      typeof versionRemoved === "string"
+        ? semver.coerce(customCoerce(versionRemoved))
+        : null;
+    if (!semverCurrent || !semverRemoved) return false;
+    if (semver.gte(semverCurrent, semverRemoved)) return false;
+  }
+
+  // If a version is true then it is supported but version is unsure
+  if (typeof versionAdded === "boolean") return versionAdded;
+  if (versionAdded === null) return true;
+  if (!semverCurrent) return true;
+  if (!versionAdded) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `eslint-plugin-compat: The feature ${node.protoChainId} is supported since a non-semver target "${target} ${versionAdded}", skipping. You're welcome to submit this log to https://github.com/amilajack/eslint-plugin-compat/issues for analysis.`
+    );
+    return true;
+  }
+
+  // A browser supports an API if its version is greater than or equal
+  // to the first version of the browser that API was added in
+  const semverAdded = semver.coerce(customCoerce(versionAdded));
+  // ex. `preview`, which is not released yet
+  if (!semverAdded) return false;
+
+  return semver.gte(semverCurrent, semverAdded);
+}
+
 /*
  * Return if MDN supports the API or not
  */
@@ -80,50 +138,37 @@ export function isSupportedByMDN(
   if (!mdnRecords.has(node.protoChainId)) return true;
   const record = mdnRecords.get(node.protoChainId);
   if (!record || !record.compat.support) return true;
-  const compatRecord =
+  const compatRecord: SupportStatement | undefined =
     record.compat.support[target as keyof typeof record.compat.support];
   if (!compatRecord) return true;
-  if (!Array.isArray(compatRecord) && !("version_added" in compatRecord))
-    return true;
-  const { version_added: versionAdded } = Array.isArray(compatRecord)
-    ? compatRecord.find((e) => "version_added" in e)!
-    : compatRecord;
-
-  // If a version is true then it is supported but version is unsure
-  if (typeof versionAdded === "boolean") return versionAdded;
-  if (versionAdded === null) return true;
+  const statements = (
+    Array.isArray(compatRecord) ? compatRecord : [compatRecord]
+  ).filter((statement) => "version_added" in statement);
+  if (!statements.length) return true;
 
   // Special case for Safari TP: TP is always gte than any other releases
-  if (target === "safari") {
-    if (version === "TP") return true;
-    if (versionAdded === "TP") return false;
-  }
-  // A browser supports an API if its version is greater than or equal
-  // to the first version of the browser that API was added in
-  const semverCurrent = semver.coerce(customCoerce(String(version)));
-  const semverAdded = semver.coerce(customCoerce(versionAdded));
+  const isSafariTP = target === "safari" && version === "TP";
+  const semverCurrent =
+    semver.coerce(customCoerce(String(version))) ?? undefined;
 
   // semver.coerce() might be null for non-semvers (other than Safari TP)
   // Just warn and treat features as supported here for now to avoid lint from
   // crashing
-  if (!semverCurrent) {
+  if (!semverCurrent && !isSafariTP) {
     // eslint-disable-next-line no-console
     console.warn(
       `eslint-plugin-compat: A non-semver target "${target} ${version}" matched for the feature ${node.protoChainId}, skipping. You're welcome to submit this log to https://github.com/amilajack/eslint-plugin-compat/issues for analysis.`
     );
     return true;
   }
-  if (!versionAdded) {
-    // eslint-disable-next-line no-console
-    console.warn(
-      `eslint-plugin-compat: The feature ${node.protoChainId} is supported since a non-semver target "${target} ${versionAdded}", skipping. You're welcome to submit this log to https://github.com/amilajack/eslint-plugin-compat/issues for analysis.`
-    );
-    return true;
-  }
 
-  if (!semverAdded) return false;
-
-  return semver.gte(semverCurrent, semverAdded);
+  // BCD lists several statements if the support changed over time, ex. an API that
+  // was implemented partially at first. Any of them can cover the version.
+  return statements.some(
+    (statement) =>
+      isUsable(statement) &&
+      coversVersion(statement, semverCurrent, node, target)
+  );
 }
 
 /**
