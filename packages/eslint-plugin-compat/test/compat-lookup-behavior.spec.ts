@@ -70,7 +70,7 @@ ruleTester.run("compat (case-sensitive + memo regressions)", rule, {
       settings: { browsers: ["ie 8"], lintAllEsApis: true },
       errors: [
         {
-          message: "document.querySelector() is not supported in IE 8",
+          message: "document.querySelector is not supported in IE 8",
         },
       ],
     },

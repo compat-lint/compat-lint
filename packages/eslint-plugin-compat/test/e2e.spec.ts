@@ -651,8 +651,7 @@ ruleTester.run("compat", rule, {
       settings: { browsers: ["safari 10.1"] },
       errors: [
         {
-          message:
-            "navigator.serviceWorker() is not supported in Safari 10.1",
+          message: "navigator.serviceWorker is not supported in Safari 10.1",
         },
       ],
     },
@@ -667,7 +666,7 @@ ruleTester.run("compat", rule, {
       settings: { browsers: ["safari 10.1"] },
       errors: [
         {
-          message: "navigator.serviceWorker() is not supported in Safari 10.1",
+          message: "navigator.serviceWorker is not supported in Safari 10.1",
         },
       ],
     },
@@ -681,7 +680,7 @@ ruleTester.run("compat", rule, {
       settings: { browsers: ["safari 10.1"] },
       errors: [
         {
-          message: "navigator.serviceWorker() is not supported in Safari 10.1",
+          message: "navigator.serviceWorker is not supported in Safari 10.1",
         },
       ],
     },
@@ -696,7 +695,7 @@ ruleTester.run("compat", rule, {
       settings: { browsers: ["safari 10.1"] },
       errors: [
         {
-          message: "navigator.serviceWorker() is not supported in Safari 10.1",
+          message: "navigator.serviceWorker is not supported in Safari 10.1",
         },
       ],
     },
@@ -839,8 +838,7 @@ ruleTester.run("compat", rule, {
       },
       errors: [
         {
-          message:
-            "navigator.serviceWorker() is not supported in Safari 10.1",
+          message: "navigator.serviceWorker is not supported in Safari 10.1",
         },
       ],
     },
@@ -855,10 +853,10 @@ ruleTester.run("compat", rule, {
       `,
       errors: [
         {
-          message: "navigator.hardwareConcurrency() is not supported in IE 9",
+          message: "navigator.hardwareConcurrency is not supported in IE 9",
         },
         {
-          message: "navigator.serviceWorker() is not supported in IE 9",
+          message: "navigator.serviceWorker is not supported in IE 9",
         },
         {
           message: "SharedWorker is not supported in IE 9",
@@ -917,7 +915,7 @@ ruleTester.run("compat", rule, {
       settings: { browsers: ["ie 10"] },
       errors: [
         {
-          message: "location.origin() is not supported in IE 10",
+          message: "location.origin is not supported in IE 10",
         },
       ],
     },
@@ -1142,7 +1140,7 @@ ruleTester.run("compat", rule, {
       settings: { browsers: ["safari 10.1"] },
       errors: [
         {
-          message: "navigator.serviceWorker() is not supported in Safari 10.1",
+          message: "navigator.serviceWorker is not supported in Safari 10.1",
         },
       ],
     },
@@ -1160,7 +1158,7 @@ ruleTester.run("compat", rule, {
       settings: { browsers: ["ie 8"] },
       errors: [
         {
-          message: "Map.size() is not supported in IE 8",
+          message: "Map.size is not supported in IE 8",
         },
         {
           message: "Map is not supported in IE 8",
@@ -1172,7 +1170,7 @@ ruleTester.run("compat", rule, {
       settings: { browsers: ["ie 8"] },
       errors: [
         {
-          message: "Map.size() is not supported in IE 8",
+          message: "Map.size is not supported in IE 8",
         },
         {
           message: "Map is not supported in IE 8",
@@ -1184,7 +1182,7 @@ ruleTester.run("compat", rule, {
       settings: { browsers: ["ie 8"] },
       errors: [
         {
-          message: "Array.flat() is not supported in IE 8",
+          message: "Array.flat is not supported in IE 8",
         },
       ],
     },
@@ -1216,6 +1214,22 @@ ruleTester.run("compat", rule, {
       errors: [
         {
           message: "fetch is not supported in IE 11",
+        },
+      ],
+    },
+    // Only a member that is called is named as a method
+    {
+      code: "Array.from?.(items); items.map(Array.from); new Array.from()",
+      settings: { browsers: ["ie 11"] },
+      errors: [
+        {
+          message: "Array.from() is not supported in IE 11",
+        },
+        {
+          message: "Array.from is not supported in IE 11",
+        },
+        {
+          message: "Array.from is not supported in IE 11",
         },
       ],
     },
@@ -1526,7 +1540,7 @@ ruleTester.run("compat", rule, {
       settings: { browsers: ["chrome 39"] },
       errors: [
         {
-          message: "navigator.serviceWorker() is not supported in Chrome 39",
+          message: "navigator.serviceWorker is not supported in Chrome 39",
         },
       ],
     },
@@ -1577,7 +1591,7 @@ ruleTester.run("compat", rule, {
       settings: { browsers: ["chrome 41"] },
       errors: [
         {
-          message: "navigator.permissions() is not supported in Chrome 41",
+          message: "navigator.permissions is not supported in Chrome 41",
         },
       ],
     },
@@ -1594,7 +1608,7 @@ ruleTester.run("compat", rule, {
       errors: [
         {
           message:
-            "navigator.permissions() is not supported in Android Browser 4.4",
+            "navigator.permissions is not supported in Android Browser 4.4",
         },
       ],
     },
@@ -1622,7 +1636,7 @@ ruleTester.run("compat", rule, {
       settings: { browsers: ["chrome 56"] },
       errors: [
         {
-          message: "WebAssembly.Module() is not supported in Chrome 56",
+          message: "WebAssembly.Module is not supported in Chrome 56",
         },
       ],
     },

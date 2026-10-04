@@ -81,10 +81,18 @@ function isDeclaredInFile(
   return false;
 }
 
-function generateErrorName(rule: AstMetadataApiWithTargetsResolver): string {
-  if (rule.name) return rule.name;
-  if (rule.property) return `${rule.object}.${rule.property}()`;
-  return rule.object;
+function generateErrorName(
+  rule: AstMetadataApiWithTargetsResolver,
+  node: ESLintNode
+): string {
+  const name =
+    rule.name ??
+    (rule.property ? `${rule.object}.${rule.property}` : rule.object);
+  // Only a member that is called is named as a method, ex. `Array.from()` in
+  // `Array.from([])`, but `location.origin` or `new WebAssembly.Module()`
+  const isCalled =
+    node.parent?.type === "CallExpression" && node.parent.callee === node;
+  return rule.property && isCalled ? `${name}()` : name;
 }
 
 const getPolyfillSet = memoize(
@@ -301,7 +309,7 @@ export default {
       context.report({
         node: eslintNode,
         message: [
-          generateErrorName(node),
+          generateErrorName(node, eslintNode),
           "is not supported in",
           getUnsupportedTargetsMessage(node),
         ].join(" "),
