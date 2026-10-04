@@ -475,6 +475,11 @@ ruleTester.run("compat", rule, {
       settings: { browsers: ["Safari 11", "Opera 57", "Edge 17"] },
     },
     {
+      code: "document.body.appendChild(element)",
+      // Firefox supported `document.body` before 60 on HTMLDocument
+      settings: { browsers: ["firefox 38"] },
+    },
+    {
       code: 'Promise.resolve("foo")',
       settings: { polyfills: ["Promise"], browsers: ["ie 8"] },
     },
@@ -849,6 +854,26 @@ ruleTester.run("compat", rule, {
       errors: [
         {
           message: "location.origin() is not supported in IE 10",
+        },
+      ],
+    },
+    {
+      code: "navigator.getBattery()",
+      // Firefox removed the Battery Status API in 52
+      settings: { browsers: ["firefox 100"] },
+      errors: [
+        {
+          message: "navigator.getBattery() is not supported in Firefox 100",
+        },
+      ],
+    },
+    {
+      code: "new SpeechRecognition()",
+      // Safari only has `webkitSpeechRecognition`
+      settings: { browsers: ["safari 17"] },
+      errors: [
+        {
+          message: "SpeechRecognition is not supported in Safari 17.0",
         },
       ],
     },
