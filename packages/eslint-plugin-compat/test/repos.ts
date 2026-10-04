@@ -289,12 +289,15 @@ const repos: Array<RepoInfo> = [
       baseConfig: [
         compat.configs["flat/recommended"],
         {
+          // Only an object with nothing but `ignores` ignores files globally
           ignores: [
             "build/**",
             "dist/**",
             "examples/**/shaders/*.js",
             "**/vendor/**",
           ],
+        },
+        {
           languageOptions: {
             globals: globals.es2015,
             parserOptions: {

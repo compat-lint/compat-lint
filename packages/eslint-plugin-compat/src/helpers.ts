@@ -22,27 +22,6 @@ import {
   - All of the rules have compatibility info attached to them
 - Each API is given to versioning.ts with compatibility info
 */
-function isInsideIfStatement(
-  node: ESLintNode,
-  sourceCode: SourceCode,
-  context: Context
-) {
-  // Handle both ESLint 8 and 9 - getAncestors moved from context to sourceCode
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let ancestors: any;
-  if ("getAncestors" in sourceCode) {
-    // @ts-expect-error - ESLint 9+ uses sourceCode.getAncestors
-    ancestors = sourceCode?.getAncestors?.(node);
-  } else {
-    // ESLint 8 uses context.getAncestors - cast to any for compatibility
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    ancestors = (context as any).getAncestors?.();
-  }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return ancestors?.some((ancestor: any) => {
-    return ancestor.type === "IfStatement";
-  });
-}
 
 /**
  * Check if a node (IfStatement consequent) contains a return or throw statement,
@@ -146,18 +125,113 @@ function expressionReferencesApi(
 }
 
 /**
- * Detect the early-return guard pattern:
- *
- *   if (!('foo' in window)) { return; }
- *   window.foo.bar();  // <-- this node is guarded
- *
- * Walks up from the node to the nearest block body, then checks preceding
- * sibling statements for an if-with-early-exit whose test references the
- * same API as the failing rule.
+ * What the result of a feature check guarantees about the API of a rule:
+ * - whenTrue: the API exists if the check is truthy, ex. `'fetch' in window`
+ * - whenFalse: the API exists if the check is falsy, ex. `typeof fetch === 'undefined'`
  */
-function isGuardedByEarlyReturn(
+type Guarantee = { whenTrue: boolean; whenFalse: boolean };
+
+const NO_GUARANTEE: Guarantee = { whenTrue: false, whenFalse: false };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function isMissingValue(node: any): boolean {
+  return (
+    (node.type === "Identifier" && node.name === "undefined") ||
+    (node.type === "Literal" && node.value === null && node.raw === "null")
+  );
+}
+
+/**
+ * Get the guarantee of a comparison, ex. `typeof fetch !== 'undefined'`,
+ * `window.fetch === undefined` or `document.hidden === false`
+ */
+function comparisonGuarantee(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  node: any,
+  rule: AstMetadataApiWithTargetsResolver
+): Guarantee {
+  const equal = node.operator === "===" || node.operator === "==";
+  if (!equal && node.operator !== "!==" && node.operator !== "!=") {
+    return NO_GUARANTEE;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const compare = (checked: any, other: any): Guarantee | undefined => {
+    let missing: boolean;
+    if (checked.type === "UnaryExpression" && checked.operator === "typeof") {
+      if (other.type !== "Literal" || typeof other.value !== "string") {
+        return undefined;
+      }
+      checked = checked.argument;
+      missing = other.value === "undefined";
+    } else {
+      missing = isMissingValue(other);
+    }
+    if (!expressionReferencesApi(checked, rule)) return undefined;
+    // An API that equals a value other than undefined exists
+    const existsWhenTrue = equal !== missing;
+    return { whenTrue: existsWhenTrue, whenFalse: !existsWhenTrue };
+  };
+  return (
+    compare(node.left, node.right) ??
+    compare(node.right, node.left) ??
+    NO_GUARANTEE
+  );
+}
+
+/**
+ * Determine what a feature check guarantees about the API of the rule
+ */
+function checkGuarantee(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  node: any,
+  rule: AstMetadataApiWithTargetsResolver
+): Guarantee {
+  if (!node) return NO_GUARANTEE;
+  if (node.type === "UnaryExpression" && node.operator === "!") {
+    const { whenTrue, whenFalse } = checkGuarantee(node.argument, rule);
+    return { whenTrue: whenFalse, whenFalse: whenTrue };
+  }
+  if (node.type === "LogicalExpression") {
+    const left = checkGuarantee(node.left, rule);
+    const right = checkGuarantee(node.right, rule);
+    if (node.operator === "&&") {
+      return {
+        whenTrue: left.whenTrue || right.whenTrue,
+        whenFalse: left.whenFalse && right.whenFalse,
+      };
+    }
+    if (node.operator === "||") {
+      return {
+        whenTrue: left.whenTrue && right.whenTrue,
+        whenFalse: left.whenFalse || right.whenFalse,
+      };
+    }
+    return NO_GUARANTEE;
+  }
+  if (node.type === "BinaryExpression" && node.operator !== "in") {
+    return comparisonGuarantee(node, rule);
+  }
+  // ex. `fetch`, `window.fetch` or `'fetch' in window`
+  return expressionReferencesApi(node, rule)
+    ? { whenTrue: true, whenFalse: false }
+    : NO_GUARANTEE;
+}
+
+/**
+ * Check if a node is guarded by a feature check of the API of the rule:
+ *
+ *   if (document.currentScript) {}          // <-- the check itself
+ *   if ('fetch' in window) { fetch(); }     // <-- in the branch where the API exists
+ *   if (!fetch) { polyfill(); } else { fetch(); }
+ *
+ *   if (!('fetch' in window)) { return; }   // <-- after an early exit when it is missing
+ *   fetch();
+ *
+ * Checks of unrelated conditions, ex. `if (isLoggedIn) { fetch(); }`, do not guard.
+ */
+function isGuardedByFeatureCheck(
   node: ESLintNode,
-  failingRule: AstMetadataApiWithTargetsResolver
+  rule: AstMetadataApiWithTargetsResolver
 ): boolean {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let current: any = node;
@@ -165,24 +239,29 @@ function isGuardedByEarlyReturn(
   let parent: any = node.parent;
 
   while (parent) {
+    if (parent.type === "IfStatement") {
+      if (current === parent.test) {
+        if (expressionReferencesApi(parent.test, rule)) return true;
+      } else {
+        const { whenTrue, whenFalse } = checkGuarantee(parent.test, rule);
+        if (current === parent.consequent ? whenTrue : whenFalse) return true;
+      }
+    }
     if (
       (parent.type === "BlockStatement" || parent.type === "Program") &&
       Array.isArray(parent.body)
     ) {
       const stmtIndex = parent.body.indexOf(current);
-      if (stmtIndex > 0) {
-        for (let i = 0; i < stmtIndex; i++) {
-          const stmt = parent.body[i];
-          if (
-            stmt.type === "IfStatement" &&
-            containsEarlyExit(stmt.consequent) &&
-            expressionReferencesApi(stmt.test, failingRule)
-          ) {
-            return true;
-          }
+      for (let i = 0; i < stmtIndex; i++) {
+        const stmt = parent.body[i];
+        if (
+          stmt.type === "IfStatement" &&
+          containsEarlyExit(stmt.consequent) &&
+          checkGuarantee(stmt.test, rule).whenFalse
+        ) {
+          return true;
         }
       }
-      break;
     }
     current = parent;
     parent = parent.parent;
@@ -191,17 +270,15 @@ function isGuardedByEarlyReturn(
   return false;
 }
 
-function checkNotInsideIfStatementAndReport(
+function reportUnlessGuarded(
   context: Context,
   handleFailingRule: HandleFailingRule,
   failingRule: AstMetadataApiWithTargetsResolver,
-  sourceCode: SourceCode,
   node: ESLintNode
 ) {
   if (
     context.settings?.ignoreConditionalChecks === true ||
-    (!isInsideIfStatement(node, sourceCode, context) &&
-      !isGuardedByEarlyReturn(node, failingRule))
+    !isGuardedByFeatureCheck(node, failingRule)
   ) {
     handleFailingRule(failingRule, node);
   }
@@ -221,13 +298,7 @@ export function lintCallExpression(
   if (!calleeName) return;
   const failingRule = rulesMap.get(calleeName);
   if (failingRule)
-    checkNotInsideIfStatementAndReport(
-      context,
-      handleFailingRule,
-      failingRule,
-      sourceCode,
-      node
-    );
+    reportUnlessGuarded(context, handleFailingRule, failingRule, node);
 }
 
 export function lintNewExpression(
@@ -242,13 +313,7 @@ export function lintNewExpression(
   if (!calleeName) return;
   const failingRule = rulesMap.get(calleeName);
   if (failingRule)
-    checkNotInsideIfStatementAndReport(
-      context,
-      handleFailingRule,
-      failingRule,
-      sourceCode,
-      node
-    );
+    reportUnlessGuarded(context, handleFailingRule, failingRule, node);
 }
 
 export function lintExpressionStatement(
@@ -261,13 +326,7 @@ export function lintExpressionStatement(
   if (!node?.expression?.name) return;
   const failingRule = rulesMap.get(node.expression!.name);
   if (failingRule)
-    checkNotInsideIfStatementAndReport(
-      context,
-      handleFailingRule,
-      failingRule,
-      sourceCode,
-      node
-    );
+    reportUnlessGuarded(context, handleFailingRule, failingRule, node);
 }
 
 function checkRegexpLiteral(node: ESLintNode): boolean {
@@ -366,13 +425,7 @@ export function lintMemberExpression(
     const protoChainId = protoChain.join(".");
     const failingRule = rulesMap.get(protoChainId);
     if (failingRule) {
-      checkNotInsideIfStatementAndReport(
-        context,
-        handleFailingRule,
-        failingRule,
-        sourceCode,
-        node
-      );
+      reportUnlessGuarded(context, handleFailingRule, failingRule, node);
     }
   } else {
     const objectName = node.object.name;
@@ -398,13 +451,7 @@ export function lintMemberExpression(
       failingRule = undefined;
     }
     if (failingRule)
-      checkNotInsideIfStatementAndReport(
-        context,
-        handleFailingRule,
-        failingRule,
-        sourceCode,
-        node
-      );
+      reportUnlessGuarded(context, handleFailingRule, failingRule, node);
   }
 }
 

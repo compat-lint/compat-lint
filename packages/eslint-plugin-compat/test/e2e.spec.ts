@@ -56,10 +56,10 @@ ruleTester.run("compat", rule, {
     {
       code: `
         if (Array.prototype.flat) {
-          new Array.flat()
+          [1, [2]].flat()
         }
       `,
-      settings: { browsers: ["ExplorerMobile 10"] },
+      settings: { browsers: ["ie 11"] },
     },
     {
       code: `
@@ -84,6 +84,61 @@ ruleTester.run("compat", rule, {
         }
       `,
       settings: { browsers: ["ExplorerMobile 10"] },
+    },
+    {
+      code: `
+        if (!window.fetch) {
+          polyfill()
+        } else {
+          fetch()
+        }
+      `,
+      settings: { browsers: ["ie 11"] },
+    },
+    {
+      code: `
+        if (typeof fetch === 'function') {
+          fetch()
+        }
+        if (window.fetch !== undefined) {
+          fetch()
+        }
+      `,
+      settings: { browsers: ["ie 11"] },
+    },
+    {
+      code: `
+        if (document.currentScript && document.currentScript.async) {
+          load()
+        }
+      `,
+      // The check itself is not reported
+      settings: { browsers: ["ie 11"] },
+    },
+    {
+      code: `
+        if ('IntersectionObserver' in window) {
+          if (isReady) {
+            button.addEventListener('click', () => {
+              new IntersectionObserver(callback)
+            })
+          }
+        }
+      `,
+      // Nested statements and callbacks in a guarded branch are guarded
+      settings: { browsers: ["ie 11"] },
+    },
+    {
+      code: `
+        function load(urls) {
+          if (!window.fetch) return;
+          urls.forEach((url) => {
+            fetch(url)
+          });
+        }
+      `,
+      // An early exit also guards callbacks after it
+      settings: { browsers: ["ie 11"] },
     },
     {
       code: "window",
@@ -578,6 +633,74 @@ ruleTester.run("compat", rule, {
           message: "fetch is not supported in IE 11",
         },
       ],
+    },
+    // Conditions that do not check the API should NOT suppress
+    {
+      code: `
+        if (isLoggedIn) {
+          fetch('/api/data')
+        }
+      `,
+      settings: { browsers: ["ie 11"] },
+      errors: [{ message: "fetch is not supported in IE 11" }],
+    },
+    {
+      code: `
+        if (typeof module === 'object') {
+          module.exports = () => fetch('/api/data');
+        }
+      `,
+      settings: { browsers: ["ie 11"] },
+      errors: [{ message: "fetch is not supported in IE 11" }],
+    },
+    {
+      code: `
+        if (isReady(fetch('/api/data'))) {
+          start()
+        }
+      `,
+      settings: { browsers: ["ie 11"] },
+      errors: [{ message: "fetch is not supported in IE 11" }],
+    },
+    // Branches where the check does not guarantee the API should NOT suppress
+    {
+      code: `
+        if (window.fetch) {
+          load()
+        } else {
+          fetch('/api/data')
+        }
+      `,
+      settings: { browsers: ["ie 11"] },
+      errors: [{ message: "fetch is not supported in IE 11" }],
+    },
+    {
+      code: `
+        if (!window.fetch) {
+          fetch('/api/data')
+        }
+      `,
+      settings: { browsers: ["ie 11"] },
+      errors: [{ message: "fetch is not supported in IE 11" }],
+    },
+    {
+      code: `
+        if (window.fetch || hasPolyfill) {
+          fetch('/api/data')
+        }
+      `,
+      settings: { browsers: ["ie 11"] },
+      errors: [{ message: "fetch is not supported in IE 11" }],
+    },
+    {
+      code: `
+        function load() {
+          if (window.fetch) return;
+          fetch('/api/data');
+        }
+      `,
+      settings: { browsers: ["ie 11"] },
+      errors: [{ message: "fetch is not supported in IE 11" }],
     },
     // ignoreConditionalChecks overrides early return guards
     {
