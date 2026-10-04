@@ -375,9 +375,13 @@ ruleTester.run("compat", rule, {
     {
       code: "WebAssembly.compile()",
       settings: {
-        browsers: ["chrome 40"],
-        polyfills: ["WebAssembly", "WebAssembly.compile"],
+        browsers: ["chrome 56"],
+        polyfills: ["WebAssembly"],
       },
+    },
+    {
+      code: "WebAssembly.compile(); new WebAssembly.Module(bytes)",
+      settings: { browsers: ["chrome 57", "safari 11", "firefox 52"] },
     },
     {
       code: "new IntersectionObserver(() => {}, {});",
@@ -609,31 +613,31 @@ ruleTester.run("compat", rule, {
         },
       ],
     },
-    // {
-    //   code: "WebAssembly.compile()",
-    //   settings: {
-    //     browsers: [
-    //       "Samsung 4",
-    //       "Safari 10.1",
-    //       "Opera 12.1",
-    //       "OperaMini all",
-    //       "iOS 10.3",
-    //       "ExplorerMobile 10",
-    //       "IE 10",
-    //       "Edge 14",
-    //       "Blackberry 7",
-    //       "Baidu 7.12",
-    //       "UCAndroid 11.8",
-    //       "QQAndroid 1.2",
-    //     ],
-    //   },
-    //   errors: [
-    //     {
-    //       message:
-    //         "WebAssembly is not supported in Safari 10.1, Opera 12.1, iOS Safari 10.3, IE 10, Edge 14",
-    //     },
-    //   ],
-    // },
+    {
+      code: "WebAssembly.compile()",
+      settings: {
+        browsers: [
+          "Samsung 4",
+          "Safari 10.1",
+          "Opera 12.1",
+          "OperaMini all",
+          "iOS 10.3",
+          "ExplorerMobile 10",
+          "IE 10",
+          "Edge 14",
+          "Blackberry 7",
+          "Baidu 7.12",
+          "UCAndroid 11.8",
+          "QQAndroid 1.2",
+        ],
+      },
+      errors: [
+        {
+          message:
+            "WebAssembly.compile() is not supported in Samsung Browser 4, Safari 10.1, Opera 12.1, iOS Safari 10.3, IE 10, Edge 14",
+        },
+      ],
+    },
     {
       code: "new PaymentRequest(methodData, details, options)",
       settings: { browsers: ["chrome 57"] },
@@ -1083,6 +1087,34 @@ ruleTester.run("compat", rule, {
         {
           message:
             "Array.flat() is not supported in Samsung Browser 4, Opera Mobile 12, Android Browser 4.4",
+        },
+      ],
+    },
+    {
+      code: "WebAssembly.compile(bytes)",
+      settings: { browsers: ["ie 11"] },
+      errors: [
+        {
+          message: "WebAssembly.compile() is not supported in IE 11",
+        },
+      ],
+    },
+    {
+      code: "new WebAssembly.Module(bytes)",
+      settings: { browsers: ["chrome 56"] },
+      errors: [
+        {
+          message: "WebAssembly.Module() is not supported in Chrome 56",
+        },
+      ],
+    },
+    {
+      code: "WebAssembly.promising(fn)",
+      settings: { browsers: ["chrome 136", "firefox 140", "safari 26.5"] },
+      errors: [
+        {
+          message:
+            "WebAssembly.promising() is not supported in Safari 26.5, Firefox 140, Chrome 136",
         },
       ],
     },

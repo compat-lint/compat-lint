@@ -52,6 +52,35 @@ describe("isUsingTranspiler (babel config detection)", () => {
     }
   });
 
+  it("still reports WebAssembly when babel config exists (not polyfilled by transpilers)", async () => {
+    const tmpDir = await fs.mkdtemp(
+      path.join(os.tmpdir(), "compat-babel-wasm-")
+    );
+    try {
+      await fs.writeFile(
+        path.join(tmpDir, "babel.config.json"),
+        JSON.stringify({ presets: ["@babel/env"] })
+      );
+      const filePath = path.join(tmpDir, "index.js");
+
+      // @ts-expect-error Bug? ESLint flat config types
+      const eslint = new ESLint({
+        ...eslintBaseConfig,
+        cwd: tmpDir,
+      });
+      const results = await eslint.lintText(
+        `${codeWithEsApi}\nWebAssembly.compile(bytes);`,
+        { filePath }
+      );
+
+      expect(results[0].messages.map((message) => message.message)).toEqual([
+        "WebAssembly.compile() is not supported in IE 10",
+      ]);
+    } finally {
+      await fs.rm(tmpDir, { recursive: true, force: true });
+    }
+  });
+
   it("reports ES APIs when lintAllEsApis is true (backwards compatible behavior)", async () => {
     const tmpDir = await fs.mkdtemp(
       path.join(os.tmpdir(), "compat-lintAllEsApis-")

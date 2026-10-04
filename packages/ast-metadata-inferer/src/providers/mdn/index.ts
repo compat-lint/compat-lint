@@ -43,6 +43,13 @@ export default function mdnComaptDataProvider(): ProviderApiMetadata[] {
         kind: APIKind.ES,
       })
     ),
+    // BCD keeps the `WebAssembly` namespace in its own category. It is not an ES
+    // built-in that transpilers polyfill, so it is always linted like a web API.
+    {
+      ...browserCompatData.webassembly.api,
+      name: "WebAssembly",
+      kind: APIKind.Web,
+    },
   ];
 
   normalizedBrowserCompatApis.forEach((api) => {

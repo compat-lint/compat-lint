@@ -19,6 +19,31 @@ describe("MDN provider", () => {
     ).toEqual([]);
   });
 
+  it("should include the WebAssembly namespace as a web API", () => {
+    const { api } = browserCompatData.webassembly;
+    expect(recordsWithId("WebAssembly")).toEqual([
+      expect.objectContaining({
+        kind: "web",
+        protoChain: ["WebAssembly"],
+        compat: api.__compat,
+      }),
+    ]);
+    expect(recordsWithId("WebAssembly.compile")).toEqual([
+      expect.objectContaining({
+        kind: "web",
+        protoChain: ["WebAssembly", "compile"],
+        compat: api.compile_static.__compat,
+      }),
+    ]);
+    expect(recordsWithId("WebAssembly.Module")).toEqual([
+      expect.objectContaining({
+        kind: "web",
+        protoChain: ["WebAssembly", "Module"],
+        compat: api.Module.__compat,
+      }),
+    ]);
+  });
+
   it("should prefer the static member when a prototype member has the same name", () => {
     expect(recordsWithId("Response.json")).toEqual([
       expect.objectContaining({
