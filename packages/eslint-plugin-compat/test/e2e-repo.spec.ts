@@ -33,7 +33,12 @@ describe("e2e Repo Tests", () => {
           .filter((result) => result.messages.length > 0)
           .map(({ errorCount, messages }) => ({
             errorCount,
-            messages,
+            messages: messages.map((message) => {
+              // ESLint 9 also reports a `nodeType`, which ESLint 10 removed
+              const comparable: Record<string, unknown> = { ...message };
+              delete comparable.nodeType;
+              return comparable;
+            }),
             name,
           }));
       })
