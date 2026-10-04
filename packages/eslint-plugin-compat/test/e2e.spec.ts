@@ -141,6 +141,31 @@ ruleTester.run("compat", rule, {
       settings: { browsers: ["ie 11"] },
     },
     {
+      code: `
+        const load = window.fetch ? (url) => fetch(url) : polyfill;
+        const data = !window.fetch ? polyfill('/api') : fetch('/api');
+      `,
+      settings: { browsers: ["ie 11"] },
+    },
+    {
+      code: `
+        window.fetch && fetch('/api/data');
+        !window.fetch || fetch('/api/data');
+        typeof IntersectionObserver !== 'undefined' && new IntersectionObserver(callback);
+      `,
+      settings: { browsers: ["ie 11"] },
+    },
+    {
+      code: `
+        if (!window.Promise) {
+          window.Promise = Polyfill;
+        }
+        window.requestAnimationFrame = window.requestAnimationFrame || fallback;
+      `,
+      // Polyfills assign to the API
+      settings: { browsers: ["ie 9"] },
+    },
+    {
       code: "window",
       settings: { browsers: ["ExplorerMobile 10"] },
     },
@@ -701,6 +726,35 @@ ruleTester.run("compat", rule, {
       `,
       settings: { browsers: ["ie 11"] },
       errors: [{ message: "fetch is not supported in IE 11" }],
+    },
+    {
+      code: "window.fetch ? load() : fetch('/api/data')",
+      settings: { browsers: ["ie 11"] },
+      errors: [{ message: "fetch is not supported in IE 11" }],
+    },
+    {
+      code: "isReady && fetch('/api/data')",
+      settings: { browsers: ["ie 11"] },
+      errors: [{ message: "fetch is not supported in IE 11" }],
+    },
+    {
+      code: "window.fetch || fetch('/api/data')",
+      settings: { browsers: ["ie 11"] },
+      errors: [{ message: "fetch is not supported in IE 11" }],
+    },
+    // Calling the API in a condition is a use, not a check
+    {
+      code: `
+        if (fetch('/api/data')) {
+          done()
+        }
+        fetch('/api/data') && done();
+      `,
+      settings: { browsers: ["ie 11"] },
+      errors: [
+        { message: "fetch is not supported in IE 11" },
+        { message: "fetch is not supported in IE 11" },
+      ],
     },
     // ignoreConditionalChecks overrides early return guards
     {
