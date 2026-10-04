@@ -1,6 +1,4 @@
 import mdnCompatData from "./mdn";
-// @TODO: Needs to return compat records
-// import MsApiCatalogProvider from "./MsApiCatalogProvider";
 import getInstanceGlobals from "../helpers/instance-globals";
 import interceptAndNormalize from "../helpers/normalize-protochain";
 import type { ProviderApiMetadata } from "../types";
