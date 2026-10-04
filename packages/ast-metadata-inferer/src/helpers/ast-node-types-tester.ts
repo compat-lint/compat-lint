@@ -1,4 +1,5 @@
 import puppeteer from "puppeteer";
+import interceptAndNormalize from "./normalize-protochain";
 import { Language, CssApiMetadata, ProviderApiMetadata } from "../types";
 
 function formatJSAssertion(record: ProviderApiMetadata<Language.JS>): string {
@@ -61,6 +62,25 @@ function formatJSAssertion(record: ProviderApiMetadata<Language.JS>): string {
       }
     })()
   `;
+}
+
+/**
+ * Create assertion to check if a member of an instance global is supported.
+ * The interface is checked instead of the value of the global, which can be
+ * missing: ex. `event` is undefined unless an event is being handled
+ */
+function formatInstanceGlobalAssertion(
+  record: ProviderApiMetadata<Language.JS>,
+  instanceOf: string
+): string {
+  const [instanceGlobal, ...members] = record.protoChain;
+  const interfaceMember = {
+    ...record,
+    protoChain: [interceptAndNormalize(instanceOf), ...members],
+  };
+  return `(${JSON.stringify(instanceGlobal)} in window && ${formatJSAssertion(
+    interfaceMember
+  )})`;
 }
 
 /**
@@ -198,7 +218,9 @@ export function getJsAssertions(
 ): JSAssertions {
   return {
     language: Language.CSS,
-    apiIsSupported: formatJSAssertion(api),
+    apiIsSupported: api.instanceOf
+      ? formatInstanceGlobalAssertion(api, api.instanceOf)
+      : formatJSAssertion(api),
     determineASTNodeTypes: determineASTNodeTypes(api),
     determineIsStatic: determineIsStatic(api),
   };

@@ -14,6 +14,9 @@ export type ProviderApiMetadata<T = Language.JS> = {
   protoChain: Array<string>;
   protoChainId: string;
   compat: CompatStatement;
+  // The interface of a member of an instance global
+  // ex. `Storage` for `localStorage.getItem`
+  instanceOf?: string;
 };
 
 export interface ApiMetadata<T = Language.JS> extends ProviderApiMetadata<T> {

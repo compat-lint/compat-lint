@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import astMetadataInferer from "./metadata";
-import MdnComaptDataProvider from "./providers/mdn";
+import providers from "./providers";
 import { ProviderApiMetadata } from "./types";
 
 /**
@@ -11,7 +11,7 @@ export default async function Compat(): Promise<ProviderApiMetadata[]> {
   const astMetadata = await astMetadataInferer();
   // Add all the corresponding compat data for each inferred ast node
   const compatDataMap = new Map(
-    MdnComaptDataProvider().map((e) => [e.protoChainId, e])
+    (await providers()).map((e) => [e.protoChainId, e])
   );
   const apisWithCompatRecords = astMetadata.filter((api) =>
     compatDataMap.has(api.protoChainId)
