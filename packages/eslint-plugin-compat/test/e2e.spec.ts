@@ -544,6 +544,23 @@ ruleTester.run("compat", rule, {
       // The name of the rule, without `.prototype.`, also works
       settings: { polyfills: ["Array.flat"], browsers: ["ie 11"] },
     },
+    // All ES APIs are polyfilled, including the ES features with caniuse data
+    {
+      code: "Promise.resolve(); new Promise(run); Promise.allSettled([]); [1].flat()",
+      settings: {
+        lintAllEsApis: false,
+        polyfills: ["es:all"],
+        browsers: ["ie 11"],
+      },
+    },
+    {
+      code: "new Int8Array(2); new Uint8Array(2)",
+      settings: {
+        lintAllEsApis: false,
+        polyfills: ["es:all"],
+        browsers: ["ie 9"],
+      },
+    },
     {
       code: "history.back()",
       settings: { browsers: ["Safari 11", "Opera 57", "Edge 17"] },
@@ -1693,6 +1710,36 @@ ruleTester.run("compat", rule, {
       errors: [
         {
           message: "Array.includes() is not supported in IE 11",
+        },
+      ],
+    },
+    // Polyfilling all ES APIs does not cover web APIs or syntax
+    {
+      code: "Promise.resolve(); fetch('/api/data'); new IntersectionObserver(callback)",
+      settings: {
+        lintAllEsApis: false,
+        polyfills: ["es:all"],
+        browsers: ["ie 11"],
+      },
+      errors: [
+        {
+          message: "fetch is not supported in IE 11",
+        },
+        {
+          message: "IntersectionObserver is not supported in IE 11",
+        },
+      ],
+    },
+    {
+      code: "/(?<=y)x/",
+      settings: {
+        lintAllEsApis: false,
+        polyfills: ["es:all"],
+        browsers: ["safari 16.3"],
+      },
+      errors: [
+        {
+          message: "Lookbehind is not supported in Safari 16.3",
         },
       ],
     },

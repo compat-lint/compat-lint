@@ -52,6 +52,36 @@ describe("isUsingTranspiler (babel config detection)", () => {
     }
   });
 
+  it("does not report ES features with caniuse data when babel config exists", async () => {
+    const tmpDir = await fs.mkdtemp(
+      path.join(os.tmpdir(), "compat-babel-promise-")
+    );
+    try {
+      await fs.writeFile(
+        path.join(tmpDir, "babel.config.json"),
+        JSON.stringify({ presets: ["@babel/env"] })
+      );
+      const filePath = path.join(tmpDir, "index.js");
+
+      // @ts-expect-error Bug? ESLint flat config types
+      const eslint = new ESLint({
+        ...eslintBaseConfig,
+        cwd: tmpDir,
+      });
+      const results = await eslint.lintText(
+        "new Promise(run);\nPromise.all([]);\nfetch('/api/data');",
+        { filePath }
+      );
+
+      // Promises are an ES feature, the Fetch API is not
+      expect(results[0].messages.map((message) => message.message)).toEqual([
+        "fetch is not supported in IE 10",
+      ]);
+    } finally {
+      await fs.rm(tmpDir, { recursive: true, force: true });
+    }
+  });
+
   it("still reports WebAssembly when babel config exists (not polyfilled by transpilers)", async () => {
     const tmpDir = await fs.mkdtemp(
       path.join(os.tmpdir(), "compat-babel-wasm-")

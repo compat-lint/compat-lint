@@ -69,7 +69,7 @@ export type SourceCode = import("eslint").SourceCode;
 export interface AstMetadataApiWithTargetsResolver extends AstMetadataApi {
   id: string;
   caniuseId?: string;
-  kind?: APIKind;
+  kind?: `${APIKind}`;
   getUnsupportedTargets: (
     node: AstMetadataApiWithTargetsResolver,
     targets: Target[]

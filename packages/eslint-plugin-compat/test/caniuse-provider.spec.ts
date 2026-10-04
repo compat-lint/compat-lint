@@ -2,7 +2,9 @@ import {
   determineTargetsFromConfig,
   parseBrowsersListVersion,
 } from "../src/helpers";
-import { getUnsupportedTargets } from "../src/providers/caniuse-provider";
+import canIUseRules, {
+  getUnsupportedTargets,
+} from "../src/providers/caniuse-provider";
 import { AstMetadataApiWithTargetsResolver } from "../src/types";
 import expectRangeResultJSON from "./expect-range-result-config.json";
 
@@ -45,5 +47,21 @@ describe("CanIUseProvider", () => {
         { target: "chrome", version: "9999", parsedVersion: 9999 },
       ])
     ).toEqual([]);
+  });
+
+  it("should mark the ES features that can be polyfilled", () => {
+    const kindsOf = (caniuseId: string) =>
+      Array.from(
+        new Set(
+          canIUseRules
+            .filter((rule) => rule.caniuseId === caniuseId)
+            .map((rule) => rule.kind)
+        )
+      );
+    expect(kindsOf("promises")).toEqual(["es"]);
+    expect(kindsOf("typedarrays")).toEqual(["es"]);
+    // A web API, and syntax that can not be polyfilled
+    expect(kindsOf("fetch")).toEqual([undefined]);
+    expect(kindsOf("js-regexp-lookbehind")).toEqual([undefined]);
   });
 });
