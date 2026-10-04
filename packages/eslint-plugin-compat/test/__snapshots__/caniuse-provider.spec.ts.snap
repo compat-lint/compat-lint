@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
-
-exports[`CanIUseProvider should return unsupported iOS targets with range value for Fetch API 1`] = `
-[
-  "iOS Safari 10.0-10.2",
-]
-`;
