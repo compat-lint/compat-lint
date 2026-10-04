@@ -27,6 +27,9 @@ type AstMetadataApi = {
   syntaxes?: string[];
   protoChainId: string;
   protoChain: Array<string>;
+  // The interface of a member of an instance global
+  // ex. `Storage` for `localStorage.getItem`
+  instanceOf?: string;
 };
 
 export interface Target {

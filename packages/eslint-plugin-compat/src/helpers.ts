@@ -1,6 +1,5 @@
 /* eslint no-nested-ternary: off */
 import browserslist from "browserslist";
-import globals from "globals";
 import { AstNodeTypes, TargetNameMappings } from "./constants";
 import {
   AstMetadataApiWithTargetsResolver,
@@ -431,33 +430,6 @@ function protoChainFromMemberExpression(node: ESLintNode): string[] {
   return [...protoChain, node.property!.name];
 }
 
-const browserGlobals = new Set(Object.keys(globals.browser));
-
-/**
- * Secondary lookup for built-in `obj.prop` when the map was keyed with different
- * casing for `object` (e.g. `Document` in metadata vs `document` in the AST). The
- * property name must still match the source exactly.
- */
-function findMemberRuleByGlobalObjectCasing(
-  rulesMap: RuleMap,
-  objectName: string,
-  propertyName: string
-): AstMetadataApiWithTargetsResolver | undefined {
-  for (const [k, rule] of rulesMap) {
-    const dot = k.indexOf(".");
-    if (dot === -1) continue;
-    const kObj = k.slice(0, dot);
-    const kProp = k.slice(dot + 1);
-    if (
-      kObj.toLowerCase() === objectName.toLowerCase() &&
-      kProp === propertyName
-    ) {
-      return rule;
-    }
-  }
-  return undefined;
-}
-
 export function lintMemberExpression(
   context: Context,
   handleFailingRule: HandleFailingRule,
@@ -497,25 +469,10 @@ export function lintMemberExpression(
     const objectName = node.object.name;
     const propertyName = node.property.name;
     if (!objectName || !propertyName) return;
-    const isBrowserGlobal = browserGlobals.has(objectName);
-    let failingRule =
-      rulesMap.get(`${objectName}.${propertyName}`) ??
-      rulesMap.get(objectName);
-
-    if (!failingRule && isBrowserGlobal) {
-      failingRule = findMemberRuleByGlobalObjectCasing(
-        rulesMap,
-        objectName,
-        propertyName
-      );
-    }
-    if (
-      failingRule &&
-      !isBrowserGlobal &&
-      failingRule.object !== objectName
-    ) {
-      failingRule = undefined;
-    }
+    // Members of instance globals have rules with the name of the global,
+    // ex. `crypto.randomUUID` for `Crypto.randomUUID`
+    const failingRule =
+      rulesMap.get(`${objectName}.${propertyName}`) ?? rulesMap.get(objectName);
     if (failingRule)
       reportUnlessGuarded(context, handleFailingRule, failingRule, node);
   }

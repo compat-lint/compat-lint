@@ -110,7 +110,12 @@ function isPolyfilled(
     // v2 allowed users to select polyfills based off their caniuseId. This is
     polyfills.has(rule.id) || // no longer supported. Keeping this here to avoid breaking changes.
     polyfills.has(rule.protoChainId) || // Check if polyfill is provided (ex. `Promise.all`)
-    polyfills.has(rule.protoChain[0]) // Check if entire API is polyfilled (ex. `Promise`)
+    polyfills.has(rule.protoChain[0]) || // Check if entire API is polyfilled (ex. `Promise`)
+    // Check if the interface of an instance global is polyfilled
+    // (ex. `Crypto.randomUUID` or `Crypto` for `crypto.randomUUID`)
+    (!!rule.instanceOf &&
+      (polyfills.has(`${rule.instanceOf}.${rule.property}`) ||
+        polyfills.has(rule.instanceOf)))
   );
 }
 

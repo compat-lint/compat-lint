@@ -527,6 +527,47 @@ ruleTester.run("compat", rule, {
       code: "history.back()",
       settings: { browsers: ["Safari 11", "Opera 57", "Edge 17"] },
     },
+    // Members of instance globals
+    {
+      code: "localStorage.getItem('key'); window.sessionStorage.setItem('key', 1)",
+      settings: { browsers: ["ie 8"] },
+    },
+    {
+      code: "caches.open('v1')",
+      settings: { browsers: ["chrome 40"] },
+    },
+    {
+      code: "indexedDB.open('db')",
+      settings: { browsers: ["ie 10"] },
+    },
+    {
+      code: `
+        const localStorage = createStorage();
+        localStorage.getItem('key');
+      `,
+      settings: { browsers: ["ie 7"] },
+    },
+    {
+      code: `
+        if (window.localStorage) {
+          localStorage.getItem('key');
+        }
+      `,
+      settings: { browsers: ["ie 7"] },
+    },
+    {
+      code: "crypto.randomUUID()",
+      settings: { browsers: ["chrome 52"], polyfills: ["crypto.randomUUID"] },
+    },
+    {
+      code: "crypto.randomUUID()",
+      // The member can be polyfilled with the name of its interface
+      settings: { browsers: ["chrome 52"], polyfills: ["Crypto.randomUUID"] },
+    },
+    {
+      code: "crypto.randomUUID()",
+      settings: { browsers: ["chrome 52"], polyfills: ["Crypto"] },
+    },
     // globalThis
     {
       code: "globalThis.setTimeout(run)",
@@ -1471,13 +1512,69 @@ ruleTester.run("compat", rule, {
         },
       ],
     },
+    // Members of instance globals are named as in the code, not by their interface
     {
       code: "crypto.randomUUID()",
       settings: { browsers: ["chrome 52", "safari 14"] },
       errors: [
         {
           message:
-            "Crypto.randomUUID() is not supported in Safari 14, Chrome 52",
+            "crypto.randomUUID() is not supported in Safari 14, Chrome 52",
+        },
+      ],
+    },
+    {
+      code: "localStorage.getItem('key'); window.sessionStorage.setItem('key', 1)",
+      settings: { browsers: ["ie 7"] },
+      errors: [
+        {
+          message: "localStorage.getItem() is not supported in IE 7",
+        },
+        {
+          message: "sessionStorage.setItem() is not supported in IE 7",
+        },
+      ],
+    },
+    {
+      code: "caches.open('v1')",
+      settings: { browsers: ["chrome 39"] },
+      errors: [
+        {
+          message: "caches.open() is not supported in Chrome 39",
+        },
+      ],
+    },
+    {
+      code: "indexedDB.open('db'); indexedDB.databases()",
+      settings: { browsers: ["ie 9", "firefox 100"] },
+      errors: [
+        {
+          message: "indexedDB.open() is not supported in IE 9",
+        },
+        {
+          message:
+            "indexedDB.databases() is not supported in IE 9, Firefox 100",
+        },
+      ],
+    },
+    {
+      code: "customElements.define('x-element', Element)",
+      settings: { browsers: ["safari 10"] },
+      errors: [
+        {
+          message: "customElements.define() is not supported in Safari 10",
+        },
+      ],
+    },
+    {
+      code: "window.cookieStore.get('key'); visualViewport.width",
+      settings: { browsers: ["safari 12"] },
+      errors: [
+        {
+          message: "cookieStore.get() is not supported in Safari 12",
+        },
+        {
+          message: "visualViewport.width is not supported in Safari 12",
         },
       ],
     },
