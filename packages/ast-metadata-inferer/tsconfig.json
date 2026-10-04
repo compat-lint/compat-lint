@@ -2,6 +2,7 @@
   "extends": "@tsconfig/node16",
   "compilerOptions": {
     "noEmit": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["node", "jest"]
   }
 }
