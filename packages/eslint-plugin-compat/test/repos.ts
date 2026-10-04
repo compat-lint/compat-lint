@@ -1,7 +1,7 @@
 /* eslint no-console: off */
 import path from "path";
 import { mkdirSync, existsSync } from "fs";
-import simpleGit, { SimpleGit } from "simple-git";
+import { simpleGit, SimpleGit } from "simple-git";
 import { ESLint } from "eslint";
 import globals from "globals";
 import compat from "@compat-lint/eslint-plugin-compat";
