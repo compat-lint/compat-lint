@@ -35,26 +35,50 @@ type ESLint = {
   [astNodeTypeName: string]: (node: ESLintNode) => void;
 };
 
-function getName(node: ESLintNode): string {
-  switch (node.type) {
-    case "NewExpression": {
-      return node.callee!.name;
-    }
-    case "MemberExpression": {
-      return node.object!.name;
-    }
-    case "ExpressionStatement": {
-      return node.expression!.name;
-    }
-    case "CallExpression": {
-      return node.callee!.name;
-    }
-    case "Literal": {
-      return node.type;
-    }
+/**
+ * Get the identifier a node starts with, ex. `Map` for `new Map().size`
+ */
+function getRootIdentifier(
+  node: ESLintNode | undefined
+): ESLintNode | undefined {
+  switch (node?.type) {
+    case "Identifier":
+      return node;
+    case "MemberExpression":
+      return getRootIdentifier(node.object);
+    case "CallExpression":
+    case "NewExpression":
+      return getRootIdentifier(node.callee);
+    case "ExpressionStatement":
+    case "ChainExpression":
+      return getRootIdentifier(node.expression);
     default:
-      throw new Error("not found");
+      return undefined;
   }
+}
+
+/**
+ * Check if the name a node starts with is declared in the file and visible from the
+ * node, ex. as an import, variable, parameter, function or class. It then does not
+ * refer to the global API of that name.
+ */
+function isDeclaredInFile(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  sourceCode: any,
+  node: ESLintNode
+): boolean {
+  const identifier = getRootIdentifier(node);
+  if (!identifier) return false;
+  for (
+    let scope = sourceCode.getScope(identifier);
+    scope;
+    scope = scope.upper
+  ) {
+    const variable = scope.set.get(identifier.name);
+    // Globals are not defined in the file
+    if (variable) return variable.defs.length > 0;
+  }
+  return false;
 }
 
 function generateErrorName(rule: AstMetadataApiWithTargetsResolver): string {
@@ -252,13 +276,6 @@ export default {
       lintAllEsApis
     );
 
-    type Error = {
-      message: string;
-      node: ESLintNode;
-    };
-
-    const errors: Error[] = [];
-
     // Cache getUnsupportedTargets per rule; targets are fixed for this context.
     const unsupportedTargetsByRule = new Map<string, string>();
     const getUnsupportedTargetsMessage = (
@@ -279,17 +296,17 @@ export default {
       eslintNode: ESLintNode
     ) => {
       if (isPolyfilled(context, node)) return;
-      errors.push({
+      // ex. `import { Set } from 'immutable'` or `items.map(fetch => fetch.id)`
+      if (isDeclaredInFile(sourceCode, eslintNode)) return;
+      context.report({
         node: eslintNode,
         message: [
           generateErrorName(node),
           "is not supported in",
           getUnsupportedTargetsMessage(node),
         ].join(" "),
-      });
+      } as Rule.ReportDescriptor);
     };
-
-    const identifiers = new Set();
 
     return {
       CallExpression: lintCallExpression.bind(
@@ -327,32 +344,6 @@ export default {
         ruleMaps.literal,
         sourceCode
       ),
-      // Keep track of all the defined variables. Do not report errors for nodes that are not defined
-      Identifier(node: ESLintNode) {
-        if (node.parent) {
-          const { type } = node.parent;
-          if (
-            type === "Property" || // ex. const { Set } = require('immutable');
-            type === "FunctionDeclaration" || // ex. function Set() {}
-            type === "FunctionExpression" || // ex. arr.map(function(Set) {})
-            type === "ArrowFunctionExpression" || // ex. arr.map(Set => Set.id)
-            type === "VariableDeclarator" || // ex. const Set = () => {}
-            type === "ClassDeclaration" || // ex. class Set {}
-            type === "ImportDefaultSpecifier" || // ex. import Set from 'set';
-            type === "ImportSpecifier" || // ex. import {Set} from 'set';
-            type === "ImportDeclaration" // ex. import {Set} from 'set';
-          ) {
-            identifiers.add(node.name);
-          }
-        }
-      },
-      "Program:exit": () => {
-        // Get a map of all the variables defined in the root scope (not the global scope)
-        // const variablesMap = context.getScope().childScopes.map(e => e.set)[0];
-        errors
-          .filter((error) => !identifiers.has(getName(error.node)))
-          .forEach((node) => context.report(node as Rule.ReportDescriptor));
-      },
     };
   },
 } as unknown as Rule.RuleModule;
