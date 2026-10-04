@@ -874,11 +874,11 @@ ruleTester.run("compat", rule, {
     },
     {
       code: "navigator.getBattery()",
-      // The lowest version supports it, but it is removed in the highest version
+      // The lowest version supports it, but it is removed in the higher versions
       settings: { browsers: ["firefox 51", "firefox 60", "firefox 100"] },
       errors: [
         {
-          message: "navigator.getBattery() is not supported in Firefox 100",
+          message: "navigator.getBattery() is not supported in Firefox 60",
         },
       ],
     },
@@ -889,6 +889,28 @@ ruleTester.run("compat", rule, {
       errors: [
         {
           message: "fetch is not supported in IE 9, Chrome 41",
+        },
+      ],
+    },
+    {
+      code: "AbortSignal.abort()",
+      // Node.js supports it from 14.17.0 to 14.x and since 15.12.0, but not in between
+      settings: { browsers: ["node 14.17", "node 15.5", "node 16.0"] },
+      errors: [
+        {
+          message: "AbortSignal.abort() is not supported in Node.js 15.5.0",
+        },
+      ],
+    },
+    {
+      code: "new AnimationEvent('start')",
+      // Opera supports it from 12.1 to 14 and since 30
+      settings: {
+        browsers: ["opera 12.1", "opera 20", "opera 25", "opera 30"],
+      },
+      errors: [
+        {
+          message: "AnimationEvent is not supported in Opera 20",
         },
       ],
     },

@@ -18,7 +18,7 @@ import {
   lintLiteral,
   lintMemberExpression,
   lintNewExpression,
-  parseBrowsersListVersionBounds,
+  parseBrowsersListVersions,
   type RuleMap,
 } from "../helpers"; // will be deprecated and introduced to this file
 import { nodes } from "../providers";
@@ -210,7 +210,7 @@ export default {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (context as any).sourceCode ?? (context as any).getSourceCode();
 
-    // Determine lowest and highest targets from browserslist config, which reads user's
+    // Determine all targets from browserslist config, which reads user's
     // package.json config section. Use config from eslintrc for testing purposes
     const browserslistConfig: BrowserListConfig =
       context.settings?.browsers ||
@@ -238,7 +238,7 @@ export default {
       // Attempt to infer polyfilling of ES APIs from babel config
       (!context.settings?.polyfills?.includes("es:all") &&
         !isUsingTranspiler(browserslistDir));
-    const browserslistTargets = parseBrowsersListVersionBounds(
+    const browserslistTargets = parseBrowsersListVersions(
       determineTargetsFromConfig(
         browserslistDir,
         browserslistConfig,

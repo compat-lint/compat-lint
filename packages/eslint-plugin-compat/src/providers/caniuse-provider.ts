@@ -1,4 +1,5 @@
 import * as lite from "caniuse-lite";
+import memoize from "lodash.memoize";
 import { AstNodeTypes, STANDARD_TARGET_NAME_MAPPING } from "../constants";
 import { AstMetadataApiWithTargetsResolver, Target } from "../types";
 
@@ -39,6 +40,11 @@ function isVersionInRange(
   return lowerBound <= targetVersion && targetVersion <= upperBound;
 }
 
+// Unpacking the data of a feature is expensive and every target needs it
+const getFeature = memoize((caniuseId: string) =>
+  lite.feature(lite.features[caniuseId])
+);
+
 /*
  * Check the CanIUse database to see if targets are supported
  *
@@ -51,7 +57,7 @@ function isSupportedByCanIUse(
 ): boolean {
   if (!node.caniuseId) return false;
 
-  const data = lite.feature(lite.features[node.caniuseId]);
+  const data = getFeature(node.caniuseId);
 
   if (!data) return true;
   const { stats } = data;

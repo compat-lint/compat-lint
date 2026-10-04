@@ -628,32 +628,35 @@ export function parseBrowsersListVersion(
 
 /**
  * Parses the versions that are given by browserslist like `parseBrowsersListVersion`,
- * but also returns the highest version of each target. An API can be missing in the
- * lowest version because it was added later, and in the highest version because it
- * was removed.
+ * but returns every version of each target. An API is not only missing in the lowest
+ * version if it was added later: it can also be removed in a higher version, or be
+ * missing in versions in between.
  *
  * @param targetslist - List of targest from browserslist api
- * @returns - The lowest version of each target, followed by its highest version if
- *   that is another version
+ * @returns - All versions of each target, starting with its lowest version
  */
-export function parseBrowsersListVersionBounds(
+export function parseBrowsersListVersions(
   targetslist: Array<string>
 ): Array<Target> {
   const targets = parseAndSortTargets(targetslist);
-  return targets.flatMap((lowest: Target, i: number): Array<Target> => {
-    if (i + 1 !== targets.length && lowest.target === targets[i + 1].target) {
-      return [];
+  const versions: Array<Target> = [];
+  // Targets of the same kind follow each other with the highest version first
+  let end = targets.length;
+  while (end > 0) {
+    let start = end - 1;
+    while (start > 0 && targets[start - 1].target === targets[end - 1].target) {
+      start -= 1;
     }
-    // The first target of its kind has the highest version
-    const highest = targets.find((e) => e.target === lowest.target)!;
-    return highest === lowest ? [lowest] : [lowest, highest];
-  });
+    versions.unshift(...targets.slice(start, end).reverse());
+    end = start;
+  }
+  return versions;
 }
 
 /**
  * Get the names of the targets that do not support the API of the rule. Only the
  * first unsupported version of each target is named, which is the lowest version
- * for targets from `parseBrowsersListVersionBounds`.
+ * for targets from `parseBrowsersListVersions`.
  */
 export function getUnsupportedTargetNames(
   rule: AstMetadataApiWithTargetsResolver,
