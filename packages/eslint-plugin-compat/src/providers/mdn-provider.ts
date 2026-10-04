@@ -19,18 +19,19 @@ interface TargetIdMappings {
   safari: "safari";
   safari_ios: "ios_saf";
   ie: "ie";
-  edge_mobile: "ie_mob";
   edge: "edge";
-  opera_android: "and_opera";
-  chrome_android: "and_chrome";
-  firefox_android: "and_firefox";
-  webview_android: "and_webview";
-  samsunginternet_android: "and_samsung";
+  opera_android: "op_mob";
+  chrome_android: "and_chr";
+  firefox_android: "and_ff";
+  webview_android: "android";
+  samsunginternet_android: "samsung";
   nodejs: "node";
 }
 
 /**
- * Map ids of mdn targets to their "common/friendly" name
+ * Map ids of mdn targets to the browser ids browserslist returns.
+ * MDN has no data for the other browserslist targets (ex. op_mini, ie_mob, kaios),
+ * so APIs are treated as supported there.
  */
 const targetIdMappings: Readonly<TargetIdMappings> = {
   chrome: "chrome",
@@ -39,13 +40,12 @@ const targetIdMappings: Readonly<TargetIdMappings> = {
   safari: "safari",
   safari_ios: "ios_saf",
   ie: "ie",
-  edge_mobile: "ie_mob",
   edge: "edge",
-  opera_android: "and_opera",
-  chrome_android: "and_chrome",
-  firefox_android: "and_firefox",
-  webview_android: "and_webview",
-  samsunginternet_android: "and_samsung",
+  opera_android: "op_mob",
+  chrome_android: "and_chr",
+  firefox_android: "and_ff",
+  webview_android: "android",
+  samsunginternet_android: "samsung",
   nodejs: "node",
 };
 

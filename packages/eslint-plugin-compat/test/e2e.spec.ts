@@ -148,8 +148,12 @@ ruleTester.run("compat", rule, {
             permissionStatus.addEventListener('change', () => {});
           });
       `,
-      // The Android WebView has never supported `PermissionStatus`, so a match on it would report
-      settings: { browsers: ["chrome 52", "last 1 Android versions"] },
+      // The Android WebView has never supported `PermissionStatus`, so a match on it would report.
+      // `navigator.permissions` has the same support, so it is polyfilled to keep only that check.
+      settings: {
+        browsers: ["chrome 52", "android 4.4"],
+        polyfills: ["navigator.permissions"],
+      },
     },
     {
       code: `
@@ -826,10 +830,12 @@ ruleTester.run("compat", rule, {
       },
       errors: [
         {
-          message: "Object.entries() is not supported in iOS Safari 7.0-7.1",
+          message:
+            "Object.entries() is not supported in iOS Safari 7.0-7.1, Android Browser 4",
         },
         {
-          message: "Object.values() is not supported in iOS Safari 7.0-7.1",
+          message:
+            "Object.values() is not supported in iOS Safari 7.0-7.1, Android Browser 4",
         },
       ],
     },
@@ -887,7 +893,7 @@ ruleTester.run("compat", rule, {
       },
       errors: [
         {
-          message: "requestAnimationFrame is not supported in op_mini all",
+          message: "requestAnimationFrame is not supported in Opera Mini all",
         },
       ],
     },
@@ -1050,6 +1056,33 @@ ruleTester.run("compat", rule, {
       errors: [
         {
           message: "navigator.permissions() is not supported in Chrome 41",
+        },
+      ],
+    },
+    {
+      code: `
+        navigator.permissions
+          .query({ name: 'local-network-access' })
+          .then((permissionStatus) => {
+            permissionStatus.addEventListener('change', () => {});
+          });
+      `,
+      // The Android WebView has never supported `navigator.permissions` or `PermissionStatus`
+      settings: { browsers: ["chrome 52", "android 4.4"] },
+      errors: [
+        {
+          message:
+            "navigator.permissions() is not supported in Android Browser 4.4",
+        },
+      ],
+    },
+    {
+      code: "[1, 2, [3, 4]].flat()",
+      settings: { browsers: ["samsung 4", "op_mob 12", "android 4.4"] },
+      errors: [
+        {
+          message:
+            "Array.flat() is not supported in Samsung Browser 4, Opera Mobile 12, Android Browser 4.4",
         },
       ],
     },
