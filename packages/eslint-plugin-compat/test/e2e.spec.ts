@@ -129,6 +129,71 @@ ruleTester.run("compat", rule, {
       settings: { browsers: ["ie 9"] },
     },
     {
+      code: `
+        function setup() {
+          if (typeof navigator.serviceWorker === 'undefined') return;
+          navigator.serviceWorker.register('/sw.js');
+        }
+      `,
+      settings: { browsers: ["safari 10.1"] },
+    },
+    {
+      code: `
+        function setup() {
+          if (!window.navigator?.['serviceWorker']) return;
+          navigator.serviceWorker.register('/sw.js');
+        }
+      `,
+      settings: { browsers: ["safari 10.1"] },
+    },
+    {
+      code: `
+        function flatten(items) {
+          if (!('flat' in Array.prototype)) return items;
+          return [items].flat();
+        }
+      `,
+      settings: { browsers: ["ie 11"] },
+    },
+    {
+      code: `
+        function uuid() {
+          if (!crypto.randomUUID) return;
+          return crypto.randomUUID();
+        }
+      `,
+      // The rule uses the interface name `Crypto`
+      settings: { browsers: ["chrome 52"] },
+    },
+    {
+      code: `
+        function load(bytes) {
+          if (typeof WebAssembly !== 'object') return;
+          return WebAssembly.compile(bytes);
+        }
+      `,
+      // Checking the namespace guards its members
+      settings: { browsers: ["ie 11"] },
+    },
+    {
+      code: `
+        function load(bytes) {
+          if (!('WebAssembly' in window)) throw new Error('No WebAssembly');
+          return new WebAssembly.Module(bytes);
+        }
+      `,
+      settings: { browsers: ["ie 11"] },
+    },
+    {
+      code: `
+        function wrap(fn) {
+          if (!WebAssembly.promising) return fn;
+          return WebAssembly.promising(fn);
+        }
+      `,
+      settings: { browsers: ["safari 26.5"] },
+    },
+    {
       code: "document.fonts()",
       settings: { browsers: ["edge 79"] },
     },
@@ -439,6 +504,78 @@ ruleTester.run("compat", rule, {
         {
           message:
             "navigator.serviceWorker() is not supported in Safari 10.1",
+        },
+      ],
+    },
+    // Early return guarding another API of the same object should NOT suppress
+    {
+      code: `
+        function setup() {
+          if (!navigator.onLine) { return; }
+          navigator.serviceWorker.register('/sw.js');
+        }
+      `,
+      settings: { browsers: ["safari 10.1"] },
+      errors: [
+        {
+          message: "navigator.serviceWorker() is not supported in Safari 10.1",
+        },
+      ],
+    },
+    {
+      code: `
+        function setup() {
+          if (!('onLine' in navigator)) { return; }
+          navigator.serviceWorker.register('/sw.js');
+        }
+      `,
+      settings: { browsers: ["safari 10.1"] },
+      errors: [
+        {
+          message: "navigator.serviceWorker() is not supported in Safari 10.1",
+        },
+      ],
+    },
+    // Early return guarding the same property of another object should NOT suppress
+    {
+      code: `
+        function setup(worker) {
+          if (!worker.serviceWorker) { return; }
+          navigator.serviceWorker.register('/sw.js');
+        }
+      `,
+      settings: { browsers: ["safari 10.1"] },
+      errors: [
+        {
+          message: "navigator.serviceWorker() is not supported in Safari 10.1",
+        },
+      ],
+    },
+    {
+      code: `
+        function wrap(fn) {
+          if (!WebAssembly.compile) return fn;
+          return WebAssembly.promising(fn);
+        }
+      `,
+      settings: { browsers: ["safari 26.5"] },
+      errors: [
+        {
+          message: "WebAssembly.promising() is not supported in Safari 26.5",
+        },
+      ],
+    },
+    {
+      code: `
+        function load() {
+          if (!window.Promise) { return; }
+          fetch('/api/data');
+        }
+      `,
+      settings: { browsers: ["ie 11"] },
+      errors: [
+        {
+          message: "fetch is not supported in IE 11",
         },
       ],
     },
