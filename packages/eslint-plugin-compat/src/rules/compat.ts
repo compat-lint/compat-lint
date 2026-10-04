@@ -97,7 +97,13 @@ function generateErrorName(
 
 const getPolyfillSet = memoize(
   (polyfillArrayJSON: string): Set<string> =>
-    new Set(JSON.parse(polyfillArrayJSON))
+    new Set(
+      Array.from<unknown, string>(JSON.parse(polyfillArrayJSON), (polyfill) =>
+        // Instance methods are polyfilled as `Array.prototype.flat`, but the
+        // rules are named without it: `Array.flat`
+        String(polyfill).replace(".prototype.", ".")
+      )
+    )
 );
 
 function isPolyfilled(

@@ -523,6 +523,27 @@ ruleTester.run("compat", rule, {
       code: 'Promise.resolve("foo")',
       settings: { polyfills: ["Promise"], browsers: ["ie 8"] },
     },
+    // Polyfills of instance methods are named with `.prototype.`
+    {
+      code: "[1, [2]].flat()",
+      settings: { polyfills: ["Array.prototype.flat"], browsers: ["ie 11"] },
+    },
+    {
+      code: "'text'.includes('x'); [1, 2].includes(1)",
+      settings: {
+        polyfills: ["String.prototype.includes", "Array.prototype.includes"],
+        browsers: ["ie 11"],
+      },
+    },
+    {
+      code: "new Array().flat",
+      settings: { polyfills: ["Array.prototype.flat"], browsers: ["ie 11"] },
+    },
+    {
+      code: "[1, [2]].flat()",
+      // The name of the rule, without `.prototype.`, also works
+      settings: { polyfills: ["Array.flat"], browsers: ["ie 11"] },
+    },
     {
       code: "history.back()",
       settings: { browsers: ["Safari 11", "Opera 57", "Edge 17"] },
@@ -1646,6 +1667,32 @@ ruleTester.run("compat", rule, {
       errors: [
         {
           message: "Array.flatMap() is not supported in Chrome 68",
+        },
+      ],
+    },
+    {
+      code: "[1, [2]].flat(); [1, 2].flatMap(x => [x, x])",
+      // Only the polyfilled instance method is not reported
+      settings: {
+        polyfills: ["Array.prototype.flat"],
+        browsers: ["chrome 68"],
+      },
+      errors: [
+        {
+          message: "Array.flatMap() is not supported in Chrome 68",
+        },
+      ],
+    },
+    {
+      code: "'text'.includes('x'); [1, 2].includes(1)",
+      // A polyfill of one object does not cover the same method of another
+      settings: {
+        polyfills: ["String.prototype.includes"],
+        browsers: ["ie 11"],
+      },
+      errors: [
+        {
+          message: "Array.includes() is not supported in IE 11",
         },
       ],
     },
