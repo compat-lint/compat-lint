@@ -59,9 +59,58 @@ function containsEarlyExit(node: any): boolean {
   return false;
 }
 
+const GLOBAL_OBJECTS = new Set(["window", "globalThis", "self"]);
+
 /**
- * Recursively check if an expression references the API identified by the rule
- * (by object name, property name, or a string literal matching either).
+ * Get the names of a member chain, ex. `window.navigator.serviceWorker` =>
+ * ['window', 'navigator', 'serviceWorker']. Returns undefined for other expressions.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function memberChain(node: any): string[] | undefined {
+  if (!node) return undefined;
+  // ex. `navigator?.serviceWorker`
+  if (node.type === "ChainExpression") return memberChain(node.expression);
+  if (node.type === "Identifier") return [node.name];
+  if (node.type !== "MemberExpression") return undefined;
+
+  const object = memberChain(node.object);
+  if (!object) return undefined;
+  if (!node.computed && node.property.type === "Identifier") {
+    return [...object, node.property.name];
+  }
+  // ex. `navigator['serviceWorker']`
+  if (
+    node.property.type === "Literal" &&
+    typeof node.property.value === "string"
+  ) {
+    return [...object, node.property.value];
+  }
+  return undefined;
+}
+
+/**
+ * Check if a member chain refers to the API of the rule. A leading global object
+ * and `prototype` are ignored, ex. `window.Array.prototype.flat` refers to `Array.flat`
+ */
+function chainReferencesApi(
+  chain: string[],
+  rule: AstMetadataApiWithTargetsResolver
+): boolean {
+  const names = chain.filter(
+    (name, i) => name !== "prototype" && !(i === 0 && GLOBAL_OBJECTS.has(name))
+  );
+  if (!rule.property) return names[0] === rule.object;
+  // Rules can use the interface name (ex. `Crypto`) of a global (ex. `crypto`)
+  if (names[0]?.toLowerCase() !== rule.object.toLowerCase()) return false;
+  // Checking the object itself guards its members, ex. `typeof WebAssembly` for
+  // `WebAssembly.compile`, but checking another member does not
+  return names.length === 1 || names[1] === rule.property;
+}
+
+/**
+ * Recursively check if an expression references the API identified by the rule,
+ * ex. `navigator.serviceWorker` or `'serviceWorker' in navigator` for
+ * `navigator.serviceWorker`, but not `navigator.onLine`
  */
 function expressionReferencesApi(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,12 +118,18 @@ function expressionReferencesApi(
   rule: AstMetadataApiWithTargetsResolver
 ): boolean {
   if (!node) return false;
-  if (node.type === "Identifier") {
-    return node.name === rule.object || node.name === rule.property;
+  // ex. `'serviceWorker' in navigator`
+  if (
+    node.type === "BinaryExpression" &&
+    node.operator === "in" &&
+    node.left.type === "Literal" &&
+    typeof node.left.value === "string"
+  ) {
+    const object = memberChain(node.right);
+    return !!object && chainReferencesApi([...object, node.left.value], rule);
   }
-  if (node.type === "Literal" && typeof node.value === "string") {
-    return node.value === rule.object || node.value === rule.property;
-  }
+  const chain = memberChain(node);
+  if (chain) return chainReferencesApi(chain, rule);
   if (node.type === "UnaryExpression") {
     return expressionReferencesApi(node.argument, rule);
   }
@@ -82,12 +137,6 @@ function expressionReferencesApi(
     return (
       expressionReferencesApi(node.left, rule) ||
       expressionReferencesApi(node.right, rule)
-    );
-  }
-  if (node.type === "MemberExpression") {
-    return (
-      expressionReferencesApi(node.object, rule) ||
-      expressionReferencesApi(node.property, rule)
     );
   }
   if (node.type === "CallExpression") {
