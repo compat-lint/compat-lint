@@ -2,6 +2,7 @@ import path from "path";
 import {
   determineTargetsFromConfig,
   parseBrowsersListVersion,
+  parseBrowsersListVersionBounds,
 } from "../src/helpers";
 import multiEnvPackageJSON from "./multi-config.package.json";
 import singleArrayEnvPackageJSON from "./single-array-config.package.json";
@@ -83,6 +84,21 @@ describe("Versioning", () => {
       "firefox 50.5",
     ];
     expect(parseBrowsersListVersion(versions)).toMatchSnapshot();
+  });
+
+  it("should get lowest and highest target versions", () => {
+    const versions = [
+      "chrome 20",
+      "chrome 30",
+      "node 7",
+      "chrome 30.5",
+      "firefox 50.5",
+    ];
+    expect(
+      parseBrowsersListVersionBounds(versions).map(
+        ({ target, version }) => `${target} ${version}`
+      )
+    ).toEqual(["node 7", "firefox 50.5", "chrome 20", "chrome 30.5"]);
   });
 
   it("should support string config in rule option", () => {

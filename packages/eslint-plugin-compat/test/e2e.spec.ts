@@ -475,6 +475,11 @@ ruleTester.run("compat", rule, {
       settings: { browsers: ["Safari 11", "Opera 57", "Edge 17"] },
     },
     {
+      code: "navigator.getBattery()",
+      // Firefox supported the Battery Status API from 43 to 51
+      settings: { browsers: ["firefox 43", "firefox 51"] },
+    },
+    {
       code: "document.body.appendChild(element)",
       // Firefox supported `document.body` before 60 on HTMLDocument
       settings: { browsers: ["firefox 38"] },
@@ -864,6 +869,26 @@ ruleTester.run("compat", rule, {
       errors: [
         {
           message: "navigator.getBattery() is not supported in Firefox 100",
+        },
+      ],
+    },
+    {
+      code: "navigator.getBattery()",
+      // The lowest version supports it, but it is removed in the highest version
+      settings: { browsers: ["firefox 51", "firefox 60", "firefox 100"] },
+      errors: [
+        {
+          message: "navigator.getBattery() is not supported in Firefox 100",
+        },
+      ],
+    },
+    {
+      code: "fetch('/api/data')",
+      // Only the lowest unsupported version of a browser is named
+      settings: { browsers: ["ie 9", "ie 11", "chrome 41", "chrome 100"] },
+      errors: [
+        {
+          message: "fetch is not supported in IE 9, Chrome 41",
         },
       ],
     },
