@@ -188,22 +188,12 @@ export function getUnsupportedTargets(
     .map(formatTargetNames);
 }
 
-function getMetadataName(metadata: ApiMetadata) {
-  switch (metadata.protoChain.length) {
-    case 1: {
-      return metadata.protoChain[0];
-    }
-    default:
-      return `${metadata.protoChain.join(".")}()`;
-  }
-}
-
 const MdnProvider: Array<AstMetadataApiWithTargetsResolver> = apis
   // Create entries for each ast node type
   .map((metadata) =>
     metadata.astNodeTypes.map((astNodeType) => ({
       ...metadata,
-      name: getMetadataName(metadata),
+      name: metadata.protoChain.join("."),
       id: metadata.protoChainId,
       protoChainId: metadata.protoChainId,
       astNodeType,
