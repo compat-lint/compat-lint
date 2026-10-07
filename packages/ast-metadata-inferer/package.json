@@ -22,7 +22,7 @@
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.12.0",
     "jest": "^29.4.2",
-    "prettier": "^2.8.8",
+    "prettier": "^3.9.9",
     "puppeteer": "^24.43.1",
     "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
