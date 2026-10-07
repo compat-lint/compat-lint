@@ -77,7 +77,6 @@
     "@compat-lint/ast-metadata-inferer": "workspace:^",
     "browserslist": "^4.29.2",
     "caniuse-lite": "^1.0.30001813",
-    "find-up": "^5.0.0",
     "globals": "^17.5.0",
     "lodash.memoize": "^4.1.2",
     "semver": "^7.7.4"

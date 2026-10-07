@@ -236,9 +236,6 @@ importers:
       caniuse-lite:
         specifier: ^1.0.30001813
         version: 1.0.30001813
-      find-up:
-        specifier: ^5.0.0
-        version: 5.0.0
       globals:
         specifier: ^17.5.0
         version: 17.12.0
