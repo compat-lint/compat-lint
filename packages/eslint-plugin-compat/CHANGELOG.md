@@ -1,5 +1,12 @@
 ## [7.0.2](https://github.com/amilajack/eslint-plugin-compat/compare/v7.0.1...v7.0.2) (2026-04-29)
 
+## 8.1.1
+
+### Patch Changes
+
+- 477b251: Remove the find-up dependency; the babel config and `package.json` lookups walk up the directories with `fs` directly
+- @compat-lint/ast-metadata-inferer@8.1.1
+
 ## 8.1.0
 
 ### Minor Changes
