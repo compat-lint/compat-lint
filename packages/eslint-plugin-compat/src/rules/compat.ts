@@ -6,7 +6,6 @@
  *   Gets protochain for the ESLint nodes the plugin is interested in
  */
 import { Rule } from "eslint";
-import findUp from "find-up";
 import fs from "fs";
 import memoize from "lodash.memoize";
 import path from "path";
@@ -135,20 +134,37 @@ const babelConfigs = [
   ".babelrc.cjs",
 ];
 
+function isFile(filePath: string): boolean {
+  try {
+    return fs.statSync(filePath).isFile();
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Find the closest file with one of the given names, starting in the absolute directory `dir`
+ * and walking up to the filesystem root. Within a directory, the first matching name wins.
+ */
+function findUp(names: string[], dir: string): string | undefined {
+  for (const name of names) {
+    const candidate = path.join(dir, name);
+    if (isFile(candidate)) return candidate;
+  }
+  const parent = path.dirname(dir);
+  return parent === dir ? undefined : findUp(names, parent);
+}
+
 /**
  * Determine if a user has a babel config, which we use to infer if the linted code is polyfilled.
  * Memoized by directory so multiple files in the same project reuse the result.
  */
 const isUsingTranspiler = memoize(
   (filePath: string): boolean => {
-    const dir = path.dirname(filePath);
-    const configPath = findUp.sync(babelConfigs, {
-      cwd: dir,
-    });
+    const dir = path.resolve(path.dirname(filePath));
+    const configPath = findUp(babelConfigs, dir);
     if (configPath) return true;
-    const pkgPath = findUp.sync("package.json", {
-      cwd: dir,
-    });
+    const pkgPath = findUp(["package.json"], dir);
     // Check if babel property exists
     if (pkgPath) {
       const pkg = JSON.parse(fs.readFileSync(pkgPath).toString());
