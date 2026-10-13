@@ -108,9 +108,9 @@ exports[`Versioning should support multi env config in browserslist package.json
     "version": "14.9",
   },
   {
-    "parsedVersion": 156,
+    "parsedVersion": 157,
     "target": "and_ff",
-    "version": "156",
+    "version": "157",
   },
   {
     "parsedVersion": 154,
@@ -198,9 +198,9 @@ exports[`Versioning should support resolving browserslist config in subdirectory
     "version": "14.9",
   },
   {
-    "parsedVersion": 156,
+    "parsedVersion": 157,
     "target": "and_ff",
-    "version": "156",
+    "version": "157",
   },
   {
     "parsedVersion": 154,
@@ -298,9 +298,9 @@ exports[`Versioning should support single array config in browserslist package.j
     "version": "14.9",
   },
   {
-    "parsedVersion": 156,
+    "parsedVersion": 157,
     "target": "and_ff",
-    "version": "156",
+    "version": "157",
   },
   {
     "parsedVersion": 154,
@@ -378,9 +378,9 @@ exports[`Versioning should support string config in rule option 1`] = `
     "version": "14.9",
   },
   {
-    "parsedVersion": 156,
+    "parsedVersion": 157,
     "target": "and_ff",
-    "version": "156",
+    "version": "157",
   },
   {
     "parsedVersion": 154,
