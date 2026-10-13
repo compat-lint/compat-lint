@@ -38,6 +38,9 @@
     "start": "npm run metadata",
     "test": "jest && npm run build"
   },
+  "prettier": {
+    "trailingComma": "es5"
+  },
   "files": [
     "lib",
     "compat.json",
