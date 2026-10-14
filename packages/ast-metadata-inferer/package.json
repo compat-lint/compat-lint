@@ -17,7 +17,7 @@
     "@tsconfig/node24": "^24.0.5",
     "@types/jest": "^29.4.0",
     "@types/node": "^24.19.0",
-    "@webref/idl": "^3.85.0",
+    "@webref/idl": "^3.85.1",
     "eslint": "^10.11.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.12.0",
