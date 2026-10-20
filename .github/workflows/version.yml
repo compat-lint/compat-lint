@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0 # Find the Dependabot updates since the last release
       - name: Setup pnpm
         uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
       - name: Setup Node.js
@@ -23,6 +25,9 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install --frozen-lockfile --ignore-scripts
+      # Not committed, the version script turns them into changelog entries
+      - name: Add changesets for Dependabot updates
+        run: .github/scripts/dependabot-changesets.sh
       # Publishing happens on the version tag, see release.yml
       - name: Create version pull request
         uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
