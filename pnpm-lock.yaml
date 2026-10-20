@@ -173,8 +173,8 @@ importers:
   packages/ast-metadata-inferer:
     dependencies:
       '@mdn/browser-compat-data':
-        specifier: ^8.1.3
-        version: 8.1.3
+        specifier: ^8.1.5
+        version: 8.1.5
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.1
@@ -189,8 +189,8 @@ importers:
         specifier: ^24.19.0
         version: 24.19.0
       '@webref/idl':
-        specifier: ^3.85.0
-        version: 3.85.0(webidl2@24.5.0)
+        specifier: ^3.85.1
+        version: 3.85.1(webidl2@24.5.0)
       eslint:
         specifier: ^10.11.0
         version: 10.11.0(supports-color@8.1.1)
@@ -204,8 +204,8 @@ importers:
         specifier: ^30.5.2
         version: 30.5.2(@types/node@24.19.0)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@24.19.0)(typescript@6.0.3))
       prettier:
-        specifier: ^2.8.8
-        version: 2.8.8
+        specifier: ^3.9.10
+        version: 3.9.10
       puppeteer:
         specifier: ^24.43.1
         version: 24.43.1(supports-color@8.1.1)(typescript@6.0.3)
@@ -234,8 +234,8 @@ importers:
         specifier: ^4.29.2
         version: 4.29.2
       caniuse-lite:
-        specifier: ^1.0.30001813
-        version: 1.0.30001813
+        specifier: ^1.0.30001814
+        version: 1.0.30001814
       globals:
         specifier: ^17.5.0
         version: 17.12.0
@@ -293,7 +293,7 @@ importers:
         version: 7.6.2(eslint@10.11.0(supports-color@8.1.1))
       eslint-plugin-prettier:
         specifier: ^5.5.5
-        version: 5.5.6(@types/eslint@9.6.1)(eslint-config-prettier@10.1.8(eslint@10.11.0(supports-color@8.1.1)))(eslint@10.11.0(supports-color@8.1.1))(prettier@3.9.9)
+        version: 5.5.6(@types/eslint@9.6.1)(eslint-config-prettier@10.1.8(eslint@10.11.0(supports-color@8.1.1)))(eslint@10.11.0(supports-color@8.1.1))(prettier@3.9.10)
       expect-type:
         specifier: ^1.3.0
         version: 1.4.0
@@ -301,8 +301,8 @@ importers:
         specifier: ^30.5.2
         version: 30.5.2(@types/node@24.19.0)(supports-color@8.1.1)(ts-node@10.9.2(@types/node@24.19.0)(typescript@6.0.3))
       prettier:
-        specifier: ^3.8.3
-        version: 3.9.9
+        specifier: ^3.9.10
+        version: 3.9.10
       simple-git:
         specifier: ^4.0.2
         version: 4.0.2(supports-color@8.1.1)
@@ -781,8 +781,8 @@ packages:
     resolution: {integrity: sha512-6QEf6yqFbETdwGITKq57aYoPfX/3K8XFNwsAlx0C1M7o8cb79sv1M3w+tWuWvIcSbNqrLF7OD7YpZMVVz335hQ==}
     engines: {node: '>=20.0.0'}
 
-  '@mdn/browser-compat-data@8.1.3':
-    resolution: {integrity: sha512-CMVFbWe6y0EEc4qXtcoIc9WnFiLzk8Xd/0CTGUZZI0xC/7fhZOPIFbgCesG2wGhPBMzwEpD9VuKcPqy0r6LNKQ==}
+  '@mdn/browser-compat-data@8.1.5':
+    resolution: {integrity: sha512-iNxW5XEJOA29iWbeog/8FX7eI1obR0PWV1SQbJOG9TnyTAqTUxBF5R5/rcz2qQiouCsiAqUVFErcN+gd0Fs3TQ==}
 
   '@napi-rs/wasm-runtime@1.2.4':
     resolution: {integrity: sha512-AJxoUD2/15ESHbvpcyjU274nsAPLuOtPHCk0vKJM5pj//Fg/B1FXNWjPnXTT9PymCYYiHo4zPj0ZomXBKhoy7g==}
@@ -1177,8 +1177,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@webref/idl@3.85.0':
-    resolution: {integrity: sha512-pUflhFMSsZ+uwjxiyFwvzs1q/Y+1a4xps0toQbHgyNXvE9QMC+BpQZxhdX3VAS+OF0349XIezNHUE0V4NWFffw==}
+  '@webref/idl@3.85.1':
+    resolution: {integrity: sha512-wVV+ZSzLYOY8tGNplkwiLA527kZhO4350tM3VKe8jeVPHT9wjhm3ds+Sx72USdPBY4/TP11ccYClSXxxelE36A==}
     peerDependencies:
       webidl2: ^24.5.0
 
@@ -1379,8 +1379,8 @@ packages:
     resolution: {integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==}
     engines: {node: '>=10'}
 
-  caniuse-lite@1.0.30001813:
-    resolution: {integrity: sha512-zfjJo4rM0+fUomGDBW/xcDjhIwz/210DGvip2MAMDZ8KHcRPnOHmEgHPZP0UHlZoxr8fYKVJOqcORhYQcG4FKQ==}
+  caniuse-lite@1.0.30001814:
+    resolution: {integrity: sha512-/Uaf1lAzr59XcMpW0o96WoEfr+VXK2OX4U9AgFoiSHsVJ4HppnIFUjtYzsyDH2+tgANaQb2/oxYGwCPapN1FpA==}
 
   chalk@4.1.2:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
@@ -2227,13 +2227,8 @@ packages:
     resolution: {integrity: sha512-SxToR7P8Y2lWmv/kTzVLC1t/GDI2WGjMwNhLLE9qtH8Q13C+aEmuRlzDst4Up4s0Wc8sF2M+J57iB3cMLqftfg==}
     engines: {node: '>=6.0.0'}
 
-  prettier@2.8.8:
-    resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
-    engines: {node: '>=10.13.0'}
-    hasBin: true
-
-  prettier@3.9.9:
-    resolution: {integrity: sha512-Z/CJHIkdujO/OtN7nXUii0Rf3VT5SRuhjBA82Xvu2XhBUgX3nhP67T0LHceBdQLex7OOFGTox+Q5Yg8Jk2Qivg==}
+  prettier@3.9.10:
+    resolution: {integrity: sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -3285,7 +3280,7 @@ snapshots:
       tinyglobby: 0.2.17
       yaml: 2.9.1
 
-  '@mdn/browser-compat-data@8.1.3': {}
+  '@mdn/browser-compat-data@8.1.5': {}
 
   '@napi-rs/wasm-runtime@1.2.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)':
     dependencies:
@@ -3649,7 +3644,7 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.12.2':
     optional: true
 
-  '@webref/idl@3.85.0(webidl2@24.5.0)':
+  '@webref/idl@3.85.1(webidl2@24.5.0)':
     dependencies:
       webidl2: 24.5.0
 
@@ -3816,7 +3811,7 @@ snapshots:
   browserslist@4.29.2:
     dependencies:
       baseline-browser-mapping: 2.11.26
-      caniuse-lite: 1.0.30001813
+      caniuse-lite: 1.0.30001814
       electron-to-chromium: 1.5.440
       node-releases: 2.0.57
       update-browserslist-db: 1.3.3(browserslist@4.29.2)
@@ -3847,7 +3842,7 @@ snapshots:
 
   camelcase@6.3.0: {}
 
-  caniuse-lite@1.0.30001813: {}
+  caniuse-lite@1.0.30001814: {}
 
   chalk@4.1.2:
     dependencies:
@@ -3985,10 +3980,10 @@ snapshots:
       eslint: 10.11.0(supports-color@8.1.1)
       estraverse: 5.3.0
 
-  eslint-plugin-prettier@5.5.6(@types/eslint@9.6.1)(eslint-config-prettier@10.1.8(eslint@10.11.0(supports-color@8.1.1)))(eslint@10.11.0(supports-color@8.1.1))(prettier@3.9.9):
+  eslint-plugin-prettier@5.5.6(@types/eslint@9.6.1)(eslint-config-prettier@10.1.8(eslint@10.11.0(supports-color@8.1.1)))(eslint@10.11.0(supports-color@8.1.1))(prettier@3.9.10):
     dependencies:
       eslint: 10.11.0(supports-color@8.1.1)
-      prettier: 3.9.9
+      prettier: 3.9.10
       prettier-linter-helpers: 1.0.1
       synckit: 0.11.13
     optionalDependencies:
@@ -4840,9 +4835,7 @@ snapshots:
     dependencies:
       fast-diff: 1.3.0
 
-  prettier@2.8.8: {}
-
-  prettier@3.9.9: {}
+  prettier@3.9.10: {}
 
   pretty-format@30.5.1:
     dependencies:
