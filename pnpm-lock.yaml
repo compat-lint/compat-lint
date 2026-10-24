@@ -189,8 +189,8 @@ importers:
         specifier: ^25.9.9
         version: 25.9.9
       '@webref/idl':
-        specifier: ^3.85.1
-        version: 3.85.1(webidl2@24.5.0)
+        specifier: ^3.85.2
+        version: 3.85.2(webidl2@24.5.0)
       eslint:
         specifier: ^10.13.0
         version: 10.13.0(supports-color@8.1.1)
@@ -1180,8 +1180,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@webref/idl@3.85.1':
-    resolution: {integrity: sha512-wVV+ZSzLYOY8tGNplkwiLA527kZhO4350tM3VKe8jeVPHT9wjhm3ds+Sx72USdPBY4/TP11ccYClSXxxelE36A==}
+  '@webref/idl@3.85.2':
+    resolution: {integrity: sha512-rpl9CwsQi9Ft+KmkC6YvgaTbWtusqUzIGiI3qHKIQ8skjph+W47OlSdaUGERwzzVGhtwMCOsQ+tMm9x9LGw8jg==}
     peerDependencies:
       webidl2: ^24.5.0
 
@@ -3136,7 +3136,7 @@ snapshots:
 
   '@jest/pattern@30.5.0':
     dependencies:
-      '@types/node': 24.19.0
+      '@types/node': 25.9.9
       jest-regex-util: 30.5.0
 
   '@jest/reporters@30.5.2(supports-color@8.1.1)':
@@ -3224,7 +3224,7 @@ snapshots:
       '@jest/schemas': 30.5.0
       '@types/istanbul-lib-coverage': 2.0.6
       '@types/istanbul-reports': 3.0.4
-      '@types/node': 24.19.0
+      '@types/node': 25.9.9
       '@types/yargs': 17.0.35
       chalk: 4.1.2
 
@@ -3651,7 +3651,7 @@ snapshots:
   '@unrs/resolver-binding-win32-x64-msvc@1.12.2':
     optional: true
 
-  '@webref/idl@3.85.1(webidl2@24.5.0)':
+  '@webref/idl@3.85.2(webidl2@24.5.0)':
     dependencies:
       webidl2: 24.5.0
 
@@ -4580,7 +4580,7 @@ snapshots:
   jest-util@30.5.1:
     dependencies:
       '@jest/types': 30.5.1
-      '@types/node': 24.19.0
+      '@types/node': 25.9.9
       chalk: 4.1.2
       ci-info: 4.4.0
       graceful-fs: 4.2.11
