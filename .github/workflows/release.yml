@@ -81,6 +81,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          # Creating the release on GitHub also pushes the tag that started this run
+          if gh release view "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $GITHUB_REF_NAME already exists"
+            exit 0
+          fi
           prerelease=""
           if [[ "$GITHUB_REF_NAME" == *-* ]]; then
             prerelease="--prerelease"
