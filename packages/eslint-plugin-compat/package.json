@@ -76,7 +76,7 @@
   "dependencies": {
     "@compat-lint/ast-metadata-inferer": "workspace:^",
     "browserslist": "^4.29.2",
-    "caniuse-lite": "^1.0.30001814",
+    "caniuse-lite": "^1.0.30001818",
     "globals": "^17.13.0",
     "lodash.memoize": "^4.1.2",
     "semver": "^7.7.4"
