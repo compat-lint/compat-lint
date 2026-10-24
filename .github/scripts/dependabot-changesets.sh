@@ -6,8 +6,8 @@ set -euo pipefail
 
 for manifest in packages/*/package.json; do
   package="$(basename "$(dirname "$manifest")")"
-  # A release writes the changelog, which lists the updates before it
-  released="$(git log -1 --format=%H -- "packages/$package/CHANGELOG.md")"
+  # A release bumps the version, its changelog lists the updates before it
+  released="$(git log -1 --format=%H -G'"version":' -- "$manifest")"
   [ -n "$released" ] || continue
 
   # Only dependencies reach users of the package, devDependencies and the lockfile do not

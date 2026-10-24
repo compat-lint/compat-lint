@@ -1,4 +1,4 @@
-## [7.0.2](https://github.com/amilajack/eslint-plugin-compat/compare/v7.0.1...v7.0.2) (2026-04-29)
+# @compat-lint/eslint-plugin-compat
 
 ## 8.1.1
 
@@ -58,6 +58,7 @@
 - Updated dependencies [a951a22]
   - @compat-lint/ast-metadata-inferer@8.0.0
 
+## [7.0.2](https://github.com/amilajack/eslint-plugin-compat/compare/v7.0.1...v7.0.2) (2026-04-29)
 
 ### Performance Improvements
 
