@@ -1,5 +1,15 @@
 # @compat-lint/eslint-plugin-compat
 
+## 8.1.2
+
+### Patch Changes
+
+- Update `browserslist` from 4.29.2 to 4.29.4
+- Update `caniuse-lite` from 1.0.30001813 to 1.0.30001818
+- Update `globals` from 17.5.0 to 17.13.0
+- Updated dependencies
+  - @compat-lint/ast-metadata-inferer@8.1.2
+
 ## 8.1.1
 
 ### Patch Changes

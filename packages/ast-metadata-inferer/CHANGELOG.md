@@ -1,5 +1,11 @@
 # @compat-lint/ast-metadata-inferer
 
+## 8.1.2
+
+### Patch Changes
+
+- Update `@mdn/browser-compat-data` from 8.1.3 to 8.1.5
+
 ## 8.1.1
 
 No changes in this release.
