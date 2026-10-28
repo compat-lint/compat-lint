@@ -278,10 +278,10 @@ importers:
         version: 2.1.4
       browserslist-config-erb:
         specifier: ^0.0.3
-        version: 0.0.3(electron@44.9.0(supports-color@8.1.1))
+        version: 0.0.3(electron@45.0.0(supports-color@8.1.1))
       electron:
-        specifier: ^44.x.x
-        version: 44.9.0(supports-color@8.1.1)
+        specifier: ^45.x.x
+        version: 45.0.0(supports-color@8.1.1)
       eslint:
         specifier: ^10.13.0
         version: 10.13.0(supports-color@8.1.1)
@@ -1495,8 +1495,8 @@ packages:
   electron-to-chromium@1.5.463:
     resolution: {integrity: sha512-nVWNU6ltFjopvOdD44J4zoBkgO0M+WZiFKKFV7EjebOH9z0KNphk6bCEjplXtJofL21ARIuuwWOCsFkBVklm6w==}
 
-  electron@44.9.0:
-    resolution: {integrity: sha512-boP8zA5OIoMGYe3uWP4IqB1VJNoEzdHYgcBaVYnd1DBv5TogwXkbM4yJGSfNmYCzalVQ5J3TAIbaKOY+ILTnyg==}
+  electron@45.0.0:
+    resolution: {integrity: sha512-yjz4uhMBcO6L5X7CWgRMobf2EMJPnb9j4zuf+nu/TU/6E4Sqfx7fn/a2eACo4qngjml/0JnsoZhxYroJLxLd2w==}
     engines: {node: '>= 22.12.0'}
     hasBin: true
 
@@ -3811,9 +3811,9 @@ snapshots:
     dependencies:
       balanced-match: 4.0.4
 
-  browserslist-config-erb@0.0.3(electron@44.9.0(supports-color@8.1.1)):
+  browserslist-config-erb@0.0.3(electron@45.0.0(supports-color@8.1.1)):
     dependencies:
-      electron: 44.9.0(supports-color@8.1.1)
+      electron: 45.0.0(supports-color@8.1.1)
 
   browserslist@4.29.4:
     dependencies:
@@ -3935,7 +3935,7 @@ snapshots:
 
   electron-to-chromium@1.5.463: {}
 
-  electron@44.9.0(supports-color@8.1.1):
+  electron@45.0.0(supports-color@8.1.1):
     dependencies:
       '@electron-internal/extract-zip': 1.0.5
       '@electron/get': 5.1.0(supports-color@8.1.1)
