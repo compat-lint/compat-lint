@@ -47,6 +47,6 @@
     "metadata.json"
   ],
   "dependencies": {
-    "@mdn/browser-compat-data": "^8.1.5"
+    "@mdn/browser-compat-data": "^8.1.7"
   }
 }
