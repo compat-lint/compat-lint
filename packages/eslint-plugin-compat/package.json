@@ -102,7 +102,7 @@
     "jest": "^30.5.2",
     "prettier": "^3.9.10",
     "simple-git": "^4.0.2",
-    "ts-jest": "^29.4.9",
+    "ts-jest": "^29.4.15",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.0"
