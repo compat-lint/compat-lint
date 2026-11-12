@@ -1,5 +1,14 @@
 # @compat-lint/eslint-plugin-compat
 
+## 8.1.4
+
+### Patch Changes
+
+- Update `caniuse-lite` from 1.0.30001818 to 1.0.30001823
+- Update `semver` from 7.7.4 to 7.8.6
+- Updated dependencies
+  - @compat-lint/ast-metadata-inferer@8.1.4
+
 ## 8.1.3
 
 ### Patch Changes
