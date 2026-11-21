@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import interceptAndNormalize from "../src/helpers/normalize-protochain";
 import splitIntoChunks from "../src/helpers/split-into-chunks";
 

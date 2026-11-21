@@ -1,6 +1,7 @@
+import { describe, it, expect, vi } from "vitest";
 import Compat from "../src/compat";
 
-jest.setTimeout(process.env.CI ? 600_000 : 60_000);
+vi.setConfig({ testTimeout: process.env.CI ? 600_000 : 60_000 });
 
 describe.skip("Compat", () => {
   it("should write compat records to each api record", async () => {

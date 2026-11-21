@@ -2,6 +2,7 @@
  * Tests for isUsingTranspiler behavior: babel config detection, memoization by directory,
  * and backwards compatibility with file path (not directory) input.
  */
+import { describe, it, expect } from "vitest";
 import { promises as fs } from "fs";
 import os from "os";
 import path from "path";

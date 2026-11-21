@@ -1,8 +1,9 @@
+import { describe, it, expect, beforeAll, vi } from "vitest";
 import { ESLint } from "eslint";
 import repos, { initRepo } from "./repos";
 
 describe("e2e Repo Tests", () => {
-  jest.setTimeout(10 ** 8);
+  vi.setConfig({ testTimeout: 10 ** 8, hookTimeout: 10 ** 8 });
 
   beforeAll(() => {
     return Promise.all(repos.map((repo) => initRepo(repo, false)));

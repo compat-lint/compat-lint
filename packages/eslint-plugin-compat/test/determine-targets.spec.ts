@@ -1,3 +1,4 @@
+import { describe, it, expect, vi } from "vitest";
 import path from "path";
 import { determineTargetsFromConfig } from "../src/helpers";
 import multiEnvPackageJSON from "./multi-config.package.json";
@@ -5,13 +6,17 @@ import singleArrayEnvPackageJSON from "./single-array-config.package.json";
 
 // Echo the queries instead of resolving them against the rolling caniuse data,
 // so these tests don't change with every browserslist or caniuse-lite release
-jest.mock("browserslist", () => {
-  const actual = jest.requireActual("browserslist");
-  return Object.assign(
-    (queries?: string | Array<string>, opts: { path?: string } = {}) =>
-      [queries ?? actual.loadConfig(opts) ?? actual.defaults].flat(),
-    actual
-  );
+vi.mock("browserslist", async (importOriginal) => {
+  const { default: actual } = await importOriginal<{
+    default: typeof import("browserslist");
+  }>();
+  return {
+    default: Object.assign(
+      (queries?: string | Array<string>, opts: { path?: string } = {}) =>
+        [queries ?? actual.loadConfig(opts) ?? actual.defaults].flat(),
+      actual
+    ),
+  };
 });
 
 describe("determineTargetsFromConfig", () => {

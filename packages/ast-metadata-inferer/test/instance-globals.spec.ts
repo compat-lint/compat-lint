@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import browserCompatData from "@mdn/browser-compat-data";
 import getInstanceGlobals from "../src/helpers/instance-globals";
 import providers, { instanceGlobalRecords } from "../src/providers";
