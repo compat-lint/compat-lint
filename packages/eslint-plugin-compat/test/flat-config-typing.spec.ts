@@ -1,3 +1,4 @@
+import { describe, it } from "vitest";
 import { expectTypeOf } from "expect-type";
 import plugin from "../src/index";
 import type { Linter } from "eslint";

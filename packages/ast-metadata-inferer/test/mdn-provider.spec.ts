@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import browserCompatData from "@mdn/browser-compat-data";
 import mdnCompatDataProvider from "../src/providers/mdn";
 

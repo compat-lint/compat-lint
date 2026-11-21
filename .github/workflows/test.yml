@@ -70,4 +70,4 @@ jobs:
         run: pnpm --filter @compat-lint/eslint-plugin-compat add -D eslint@${{ matrix.eslint-version }}
       - name: Run tests
         working-directory: packages/eslint-plugin-compat
-        run: pnpm run build && pnpm run spec --testPathIgnorePatterns="test/e2e-repo.spec.ts|test/flat-config-typing.spec.ts"
+        run: pnpm run build && pnpm run spec --exclude test/flat-config-typing.spec.ts

@@ -11,9 +11,5 @@ export default defineConfig(
   {
     languageOptions: { globals: globals.node },
   },
-  {
-    files: ["test/**"],
-    languageOptions: { globals: globals.jest },
-  },
   prettier
 );

@@ -27,10 +27,7 @@ export default [
       "no-console": ["warn"],
     },
     languageOptions: {
-      globals: {
-        ...globals.jest,
-        ...globals.node,
-      },
+      globals: globals.node,
     },
   },
 ];

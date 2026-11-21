@@ -2,6 +2,7 @@
  * Regressions for case-sensitive API matching and memoization of getRulesForTargets
  * (see PR #679 review: lodash.memoize first-arg only; toLowerCase map keys / lookups).
  */
+import { describe, it, expect } from "vitest";
 import { ESLint } from "eslint";
 import { parser } from "typescript-eslint";
 import * as eslint from "eslint";

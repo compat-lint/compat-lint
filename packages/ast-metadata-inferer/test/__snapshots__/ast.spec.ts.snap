@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`AstMetadataInferer should expose metadata.json in parsable format 1`] = `
+exports[`AstMetadataInferer > should expose metadata.json in parsable format 1`] = `
 {
   "astNodeTypes": [
     "MemberExpression",
@@ -84,7 +84,7 @@ exports[`AstMetadataInferer should expose metadata.json in parsable format 1`] =
 }
 `;
 
-exports[`AstMetadataInferer should return basic output 1`] = `
+exports[`AstMetadataInferer > should return basic output 1`] = `
 {
   "astNodeTypes": [
     "NewExpression",
@@ -194,7 +194,7 @@ exports[`AstMetadataInferer should return basic output 1`] = `
 }
 `;
 
-exports[`AstMetadataInferer should write to metadata.json correctly 1`] = `
+exports[`AstMetadataInferer > should write to metadata.json correctly 1`] = `
 {
   "astNodeTypes": [
     "NewExpression",

@@ -1,8 +1,9 @@
 /* eslint global-require: off, no-console: off */
+import { describe, it, expect, vi } from "vitest";
 import fs from "fs";
 import astMetadataInferer from "../src/metadata";
 
-jest.setTimeout(process.env.CI ? 600_000 : 60_000);
+vi.setConfig({ testTimeout: process.env.CI ? 600_000 : 60_000 });
 
 describe("AstMetadataInferer", () => {
   it("should return basic output", async () => {
