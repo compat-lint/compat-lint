@@ -58,7 +58,7 @@ jobs:
 
       - name: Test eslint-plugin-compat
         working-directory: packages/eslint-plugin-compat
-        run: pnpm run build && pnpm run spec --testPathIgnorePatterns="test/e2e-repo.spec.ts|test/flat-config-typing.spec.ts"
+        run: pnpm run build && pnpm run spec --exclude test/flat-config-typing.spec.ts
 
       # pnpm replaces the workspace: dependency with the released version; npm publishes via OIDC
       - name: Pack
