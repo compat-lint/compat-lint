@@ -893,6 +893,21 @@ exports[`e2e Repo Tests > should match lint result snapshots 1`] = `
       "errorCount": 1,
       "messages": [
         {
+          "column": 5,
+          "endColumn": 45,
+          "endLine": 93,
+          "line": 93,
+          "message": "DeviceOrientationEvent.requestPermission() is not supported in Samsung Browser 30, Safari 26.6, Opera Mobile 80, Firefox 153, Chrome 109, Android Firefox 159",
+          "ruleId": "compat/compat",
+          "severity": 2,
+        },
+      ],
+      "name": "aframe",
+    },
+    {
+      "errorCount": 1,
+      "messages": [
+        {
           "column": 17,
           "endColumn": 36,
           "endLine": 251,
