@@ -72,7 +72,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@tsconfig/node24": "^24.0.5",
+    "@tsconfig/node24": "^24.0.6",
     "@types/benchmark": "^2.1.5",
     "@types/caniuse-lite": "^1.0.5",
     "@types/eslint": "^9.6.1",
