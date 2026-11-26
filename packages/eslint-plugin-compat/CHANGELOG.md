@@ -1,5 +1,13 @@
 # @compat-lint/eslint-plugin-compat
 
+## 8.1.5
+
+### Patch Changes
+
+- Update `browserslist` from 4.29.5 to 4.29.6
+- Updated dependencies
+  - @compat-lint/ast-metadata-inferer@8.1.5
+
 ## 8.1.4
 
 ### Patch Changes
